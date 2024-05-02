@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choropleth Map with Slider and Zoom</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* Add your CSS styling here */
+        #map {
+            position: relative;
+        }
+
+        .zoom-btn {
+            position: absolute;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .zoom-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        #zoom-in {
+            top: 20px;
+            left: 20px;
+        }
+
+        #zoom-out {
+            top: 50px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <svg id="map" width="960" height="600"></svg>
+    <div>
+        <input type="range" id="slider" min="2010" max="2021" value="2010">
+        <label for="slider">Year: <span id="year">2010</span></label>
+    </div>
+    <button id="zoom-in" class="zoom-btn">Zoom In</button>
+    <button id="zoom-out" class="zoom-btn">Zoom Out</button>
+
+    <script>
+    // Load world map geojson
+    d3.json("custom.geo.json").then(function(worldMap) {
+        // Load choropleth data
+        d3.csv("choropleth_map.csv").then(function(data) {
+            // Remove data for the year 2022
+            data = data.filter(function(d) {
+                return +d.Year <= 2021;
+            });
+
+            // Initialize map parameters
+            var width = 960;
+            var height = 600;
+
+            // Create SVG element
+            var svg = d3.select("#map")
+                        .attr("width", width)
+                        .attr("height", height);
+
+            // Initialize projection
+            var projection = d3.geoMercator()
+                               .fitSize([width, height], worldMap);
+
+            // Initialize path generator
+            var path = d3.geoPath()
+                         .projection(projection);
+
+            // Define color scale
+            var colorScale = d3.scaleSequential(d3.interpolateRdYlBu) // Using RdYlBu color scale
+                       .domain([d3.max(data, function(d) { return +d.Total; }), 0]); // Reverse domain
+
+            // Draw map
+            svg.selectAll("path")
+               .data(worldMap.features)
+               .enter().append("path")
+               .attr("d", path)
+               .style("fill", function(d) {
+                   // Find corresponding data for this country
+                   var countryData = data.find(function(item) {
+                       return item.Country === d.properties.admin;
+                   });
+
+                   // Return color based on total
+                   return countryData ? colorScale(countryData.Total) : "lightgrey";
+               });
+
+            // Create slider
+            var slider = d3.select("#slider")
+                           .on("input", function() {
+                               var year = this.value;
+                               // Update map and year display
+                               updateMap(year);
+                           });
+
+            // Function to update map based on selected year
+            function updateMap(year) {
+                // Update year display
+                d3.select("#year").text(year);
+
+                // Update map colors
+                svg.selectAll("path")
+                   .style("fill", function(d) {
+                       var countryData = data.find(function(item) {
+                           return item.Year === year && item.Country === d.properties.admin;
+                       });
+                       return countryData ? colorScale(countryData.Total) : "lightgrey";
+                   });
+            }
+
+            // Define zoom behavior
+            var zoom = d3.zoom()
+                .scaleExtent([1, 8]) // Set the scale extent for zooming
+                .on("zoom", zoomed); // Call the zoomed function when zoom event occurs
+
+            // Apply zoom behavior to SVG element
+            svg.call(zoom);
+
+            // Define the zoomed function
+            function zoomed(event) {
+                svg.selectAll("path") // Select all paths
+                    .attr("transform", event.transform); // Apply transformation
+            }
+
+            // Zoom In button
+            d3.select("#zoom-in").on("click", function() {
+                svg.transition().call(zoom.scaleBy, 1.5);
+            });
+
+            // Zoom Out button
+            d3.select("#zoom-out").on("click", function() {
+                svg.transition().call(zoom.scaleBy, 0.5);
+            });
+
+        });
+    });
+    </script>
+</body>
+</html>
