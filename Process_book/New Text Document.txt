@@ -1,0 +1,56 @@
+https://github.com/COS30015Project/Assignment_2
+https://github.com/MarcoGiacoppo/COS30045
+https://github.com/Panzer-II/COS30045/tree/main/Migration_Assignment2
+https://github.com/minhfarm/COS30045/blob/main/final/heatmap19802021.csv
+https://github.com/Md-Raisul-Hasan/COS30045
+https://github.com/nienn2309/Data-Visualisation
+https://github.com/Shahnawaz00/COS30045
+https://github.com/andrewbui04/Data-Visualization
+https://techwb.org/#joinusform
+image background source https://techwb.org/assets/images/bg.jpg?v=ffb95fcc
+body {
+    line-height: 1.0;
+    min-height: var(--viewport-height);
+    min-width: 320px;
+    overflow-x: hidden;
+    word-wrap: break-word;}
+body:before {
+    content: '';
+    display: block;
+    background-attachment: scroll;
+    height: var(--background-height);
+    left: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    transform: scale(1);
+    width: 100vw;
+    z-index: 0;
+    background-image: linear-gradient(to top, rgba(67, 66, 89, 0.271), rgba(67, 66, 89, 0.271)), url(assets/images/bg.jpg?v=ffb95fcc);
+    background-position: 0% 0%, center;
+    background-repeat: repeat, repeat;
+    background-size: auto, cover;
+    background-color: #FFFFFF;
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #0A0A1A;
+    border-radius: 10px;
+    border: 2.2px solid #82828b;
+
+1. REMOVED - Removing rows with a significant amount of missing data for data cleaning, 
+Simplifies analysis by focusing on countries with more complete data.
+May improve the accuracy of any conclusions drawn from the dataset.
+
+Removed Rows with Missing Data: You've removed rows that had significant missing data, focusing on countries with more complete information. This helps ensure the reliability of your analysis by eliminating potential noise caused by missing values.
+Filtered South American Countries: You've chosen to focus your analysis on countries from America, Europe, and the Australian continent, so you removed South American countries from the dataset. This decision aligns with your research focus and can simplify your analysis by narrowing down the scope.
+
+2. replace empty cells with NAN
+3. deleted colunm comments
+4. Data Consistency: Ensure that the country names in your CSV file match exactly with the country names in the GeoJSON file. Even small differences, such as extra spaces or different capitalization, can cause mismatches.
+
+
+high values are represented by warmer colors (e.g., red) and low values by cooler colors (e.g., blue). In the RdYlBu color scale, high, low, and medium colors represent different values based on the data being visualized. lowest in dark blue

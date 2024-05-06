@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choropleth Map with Slider and Zoom</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+
+body{
+        margin:0;
+    }
+    
+
+        /* Navbar styles */
+        nav {
+            background-color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+
+        nav a {
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Logo styles */
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Navigation links */
+        .nav-links {
+            display: flex;
+        }
+
+        /* Map container */
+        .map-container {
+            margin-top: 150px; /* Adjust this value to increase the space between the navbar and the map container */
+            border: 5px solid black;
+            padding: 20px;
+            width: 900px;
+            margin-left: 5px;
+            position: relative; /* Added to position the legend and zoom buttons */
+        }
+
+        /* Add your CSS styling here */
+        #map {
+            position: relative;
+            width: 940px;
+            margin-left: -20px;
+            height: 700px;
+        }
+
+        .zoom-btn {
+            position: absolute;
+            top: 20px; /* Moved the zoom buttons to the top */
+            right: 20px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .zoom-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        #zoom-out {
+            top: 50px; /* Adjusted the position of the zoom-out button */
+        }
+
+        .legend {
+            position: absolute;
+            top: 700px; /* Positioned the legend above the map container */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-item {
+            align-items: center;
+        }
+
+        .legend-box {
+            width: 90px;
+            height: 20px;
+        }
+
+        .legend-text {
+            font-size: 12px;
+        }
+
+        .controls {
+            display: flex;
+            margin-bottom: 40px;
+            margin-left: 300px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="home.html" class="logo">Migration</a>
+            <div class="nav-links">
+                <a href="try1.html">Heatmaps</a>
+                <a href="#">About</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="map-container">
+        <div class="legend" id="color-legend"></div>
+        <button id="zoom-in" class="zoom-btn">Zoom In</button>
+        <button id="zoom-out" class="zoom-btn">Zoom Out</button>
+        <div class="controls">
+            <input type="range" id="slider" min="2010" max="2021" value="2010">
+            <label for="slider">Year: <span id="year">2010</span></label>
+        </div>
+        <svg id="map" width="960" height="600"></svg>
+    </div>
+
+    <script>
+    // Load world map geojson
+d3.json("custom.geo.json").then(function(worldMap) {
+    // Load choropleth data
+    d3.csv("choropleth_map.csv").then(function(data) {
+        // Remove data for the year 2022
+        data = data.filter(function(d) {
+            return +d.Year <= 2021;
+        });
+
+        // Initialize map parameters
+        var width = 960;
+        var height = 600;
+
+        // Create SVG element
+        var svg = d3.select("#map")
+                    .attr("width", width)
+                    .attr("height", height);
+
+        // Initialize projection
+        var projection = d3.geoMercator()
+                           .fitSize([width, height], worldMap);
+
+        // Initialize path generator
+        var path = d3.geoPath()
+                     .projection(projection);
+
+        // Define color scale
+        var colorScale = d3.scaleSequential(d3.interpolateRdYlBu) // Using RdYlBu color scale
+                   .domain([d3.max(data, function(d) { return +d.Total; }), 0]); // Reverse domain
+
+        // Draw map
+        svg.selectAll("path")
+           .data(worldMap.features)
+           .enter().append("path")
+           .attr("d", path)
+           .style("fill", function(d) {
+               // Find corresponding data for this country
+               var countryData = data.find(function(item) {
+                   return item.Country === d.properties.admin;
+               });
+
+               // Return color based on total
+               return countryData ? colorScale(countryData.Total) : "lightgrey";
+           });
+
+        // Create slider
+        var slider = d3.select("#slider")
+                       .on("input", function() {
+                           var year = this.value;
+                           // Update map and year display
+                           updateMap(year);
+                       });
+
+        // Function to update map based on selected year
+        function updateMap(year) {
+            // Update year display
+            d3.select("#year").text(year);
+
+            // Update map colors
+            svg.selectAll("path")
+               .style("fill", function(d) {
+                   var countryData = data.find(function(item) {
+                       return item.Year === year && item.Country === d.properties.admin;
+                   });
+                   return countryData ? colorScale(countryData.Total) : "lightgrey";
+               });
+        }
+
+        // Define zoom behavior
+        var zoom = d3.zoom()
+            .scaleExtent([1, 8]) // Set the scale extent for zooming
+            .on("zoom", zoomed); // Call the zoomed function when zoom event occurs
+
+        // Apply zoom behavior to SVG element
+        svg.call(zoom);
+
+        // Define the zoomed function
+        function zoomed(event) {
+            svg.selectAll("path") // Select all paths
+                .attr("transform", event.transform); // Apply transformation
+        }
+
+        // Zoom In button
+        d3.select("#zoom-in").on("click", function() {
+            svg.transition().call(zoom.scaleBy, 1.5);
+        });
+
+        // Zoom Out button
+        d3.select("#zoom-out").on("click", function() {
+            svg.transition().call(zoom.scaleBy, 0.5);
+        });
+
+        // Generate color legend
+        var legendData = colorScale.ticks(5).reverse(); // Get 5 ticks from the color scale and reverse the order
+
+        // Create legend items
+        var legend = d3.select("#color-legend")
+                    .selectAll(".legend-item")
+                    .data(legendData)
+                    .enter()
+                    .append("div")
+                    .attr("class", "legend-item");
+
+        // Add color boxes to legend
+        legend.append("div")
+            .attr("class", "legend-box")
+            .style("background-color", function(d) {
+                return colorScale(d);
+            });
+
+        // Add text to legend
+        legend.append("span")
+            .attr("class", "legend-text")
+            .text(function(d, i) {
+                return legendData[i];
+            });
+        
+    });
+});
+
+    </script>
+</body>
+</html>
