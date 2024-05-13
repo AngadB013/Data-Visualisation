@@ -6,11 +6,9 @@
     <title>Choropleth Map with Slider and Zoom</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
-
-body{
-        margin:0;
-    }
-    
+        body {
+            margin: 0;
+        }
 
         /* Navbar styles */
         nav {
@@ -59,6 +57,7 @@ body{
             width: 900px;
             margin-left: 5px;
             position: relative; /* Added to position the legend and zoom buttons */
+            display: flex;
         }
 
         /* Add your CSS styling here */
@@ -115,6 +114,46 @@ body{
             margin-bottom: 40px;
             margin-left: 300px;
         }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid black;
+            padding: 10px;
+            pointer-events: none;
+        }
+
+        /* Line chart */
+        .line-chart {
+            background-color: white;
+            border: 1px solid black;
+            margin: 10px;
+            padding: 10px;
+            width: 400px;
+            height: 300px;
+            display: inline-block;
+        }
+
+        .chart {
+            width: 600px;
+            height: 500px;
+        }
+        .axis-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+          /* Add your CSS styling here */
+    .scatter-plot {
+        background-color: white;
+        border: 1px solid black;
+        margin: 10px; /* Increased margin */
+        padding: 10px; /* Increased padding */
+        width: 450px; /* Adjusted width */
+        height: 300px; /* Adjusted height */
+        display: inline-block;
+    }
     </style>
 </head>
 <body>
@@ -128,138 +167,300 @@ body{
         </nav>
     </header>
 
-    <div class="map-container">
-        <div class="legend" id="color-legend"></div>
-        <button id="zoom-in" class="zoom-btn">Zoom In</button>
-        <button id="zoom-out" class="zoom-btn">Zoom Out</button>
-        <div class="controls">
-            <input type="range" id="slider" min="2010" max="2021" value="2010">
-            <label for="slider">Year: <span id="year">2010</span></label>
+    <div class="map-container" style="display: flex;">
+        <div>
+            <div class="legend" id="color-legend"></div>
+            <button id="zoom-in" class="zoom-btn">Zoom In</button>
+            <button id="zoom-out" class="zoom-btn">Zoom Out</button>
+            <div class="controls">
+                <input type="range" id="slider" min="2010" max="2021" value="2010">
+                <label for="slider">Year: <span id="year">2010</span></label>
+            </div>
+            <svg id="map" width="960" height="600"></svg>
         </div>
-        <svg id="map" width="960" height="600"></svg>
+        <div id="line-chart-container"></div>
     </div>
-
     <script>
-    // Load world map geojson
-d3.json("custom.geo.json").then(function(worldMap) {
-    // Load choropleth data
-    d3.csv("choropleth_map.csv").then(function(data) {
-        // Remove data for the year 2022
-        data = data.filter(function(d) {
-            return +d.Year <= 2021;
-        });
-
-        // Initialize map parameters
-        var width = 960;
-        var height = 600;
-
-        // Create SVG element
-        var svg = d3.select("#map")
+        // Load world map geojson
+        d3.json("custom.geo.json").then(function (worldMap) {
+            // Load choropleth data
+            d3.csv("choropleth_map.csv").then(function (data) {
+                // Remove data for the year 2022
+                data = data.filter(function (d) {
+                    return +d.Year <= 2021;
+                });
+    
+                // Initialize map parameters
+                var width = 960;
+                var height = 600;
+    
+                // Create SVG element
+                var svg = d3.select("#map")
                     .attr("width", width)
                     .attr("height", height);
+    
+                // Initialize projection
+                var projection = d3.geoMercator()
+                    .fitSize([width, height], worldMap);
+    
+                // Initialize path generator
+                var path = d3.geoPath()
+                    .projection(projection);
+    
+                // Define color scale
+                var colorScale = d3.scaleSequential(d3.interpolateRdYlBu)
+                    .domain([d3.max(data, function (d) {
+                        return +d.Total;
+                    }), 0]);
+    
+                // Create slider
+                var slider = d3.select("#slider")
+                    .on("input", function () {
+                        var year = this.value;
+                        updateMap(year);
+                    });
+    
+                // Function to update map based on selected year
+                function updateMap(year) {
+                    d3.select("#year").text(year);
+    
+                    svg.selectAll("path")
+                        .style("fill", function (d) {
+                            var countryData = data.find(function (item) {
+                                return item.Year === year && item.Country === d.properties.admin && !isNaN(+item.Total);
+                            });
+                            return countryData ? colorScale(+countryData.Total) : "lightgrey";
+                        });
+                }
+    
+                // Define zoom behavior
+                var zoom = d3.zoom()
+                    .scaleExtent([1, 8])
+                    .on("zoom", zoomed);
+    
+                // Apply zoom behavior to SVG element
+                svg.call(zoom);
+    
+                // Define the zoomed function
+                function zoomed(event) {
+                    svg.selectAll("path")
+                        .attr("transform", event.transform);
+                }
+    
+                // Zoom In button
+                d3.select("#zoom-in").on("click", function () {
+                    svg.transition().call(zoom.scaleBy, 1.5);
+                });
+    
+                // Zoom Out button
+                d3.select("#zoom-out").on("click", function () {
+                    svg.transition().call(zoom.scaleBy, 0.5);
+                });
+    
+                // Draw map
+                var paths = svg.selectAll("path")
+                    .data(worldMap.features)
+                    .enter().append("path")
+                    .attr("d", path)
+                    .style("fill", function (d) {
+                        var countryData = data.find(function (item) {
+                            return item.Country === d.properties.admin;
+                        });
+                        return countryData ? colorScale(countryData.Total) : "lightgrey";
+                    })
+                    .on("mouseover", function (event, d) {
+                        var countryData = data.find(function (item) {
+                            return item.Country === d.properties.admin;
+                        });
+    
+                        // Create tooltip
+                        var tooltip = d3.select("body")
+                            .append("div")
+                            .attr("class", "tooltip")
+                            .html(function () {
+                                return `<strong>${d.properties.admin}</strong><br>Annual Migration: ${countryData ? countryData.Total : "N/A"}`;
+                            })
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+    
+                        // Show charts
+                        showCharts(d.properties.admin, data);
+                    })
+                    .on("mouseout", function () {
+                        // Remove tooltip
+                        d3.select(".tooltip").remove();
+    
+                        // Remove charts
+                        d3.select("#line-chart-container").selectAll("*").remove();
+                    });
+    
+                // Function to show charts
+                function showCharts(country, data) {
+                    // Filter data for the selected country
+                    var countryData = data.filter(function (d) {
+                        return d.Country === country && d.Total !== "NA";
+                    });
+    
+                    // Extract years and values
+                    var years = countryData.map(function (d) {
+                        return +d.Year;
+                    });
+                    var values = countryData.map(function (d) {
+                        return +d.Total;
+                    });
+    
+                    // Set up dimensions for the charts
+                    const margin = { top: 50, right: 50, bottom: 50, left: 80 };
+                    const chartWidth = 510 - margin.left - margin.right;
+                    const chartHeight = 420 - margin.top - margin.bottom;
+    
+                    // Create SVG element for line chart
+                    const lineChartSvg = d3.select("#line-chart-container")
+                        .append("div")
+                        .attr("class", "line-chart")
+                        .style("width", chartWidth + margin.left + margin.right + "px") // Extend border box according to chart size
+                        .style("height", chartHeight + margin.top + margin.bottom + "px") // Extend border box according to chart size
+                        .append("svg")
+                        .attr("width", chartWidth + margin.left + margin.right)
+                        .attr("height", chartHeight + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    
+                    // Create SVG element for scatter plot
+                    const scatterPlotSvg = d3.select("#line-chart-container")
+                        .append("div")
+                        .attr("class", "scatter-plot")
+                        .style("width", chartWidth + margin.left + margin.right + "px") // Extend border box according to chart size
+                        .style("height", chartHeight + margin.top + margin.bottom + "px") // Extend border box according to chart size
+                        .append("svg")
+                        .attr("width", chartWidth + margin.left + margin.right)
+                        .attr("height", chartHeight + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    
+                    // Create scales for x and y axes
+                    const x = d3.scaleLinear()
+                        .domain([2010, 2021])
+                        .range([0, chartWidth]);
+    
+                    const y = d3.scaleLinear()
+                        .domain([0, d3.max(values) + 70]) // Adjusted the domain to accommodate larger scatter points
+                        .range([chartHeight, 0]);
+    
+                    // Create line generator
+                    const line = d3.line()
+                        .x(function (d, i) { return x(years[i]); })
+                        .y(function (d) { return y(d); });
+    
+                    // Add line path to line chart
+                    lineChartSvg.append("path")
+                        .datum(values)
+                        .attr("fill", "none")
+                        .attr("stroke", "steelblue")
+                        .attr("stroke-width", 3) // Increase line size
+                        .attr("d", line);
+    
+                   // Add X axis to line chart with label
+lineChartSvg.append("g")
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(d3.axisBottom(x)
+        .tickFormat(d3.format("d")))
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("x", chartWidth / 2)
+    .attr("y", 40)
+    .style("text-anchor", "middle") // Center the text horizontally
+    .style("font-size", "14px") // Increase font size
+    .text("Year");
+    
+                    // Add Y axis to line chart with label
+lineChartSvg.append("g")
+    .call(d3.axisLeft(y))
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -chartHeight / 2)
+    .attr("y", -60)
+    .style("text-anchor", "middle") // Center the text vertically
+    .style("font-size", "14px") // Increase font size
+    .text("Refugees");
+    
+                    // Add title to line chart
+                    lineChartSvg.append("text")
+                        .attr("x", chartWidth / 2)
+                        .attr("y", -20)
+                        .attr("text-anchor", "middle")
+                        .style("font-size", "20px") // Increase title font size
+                        .text(`Migration Trend for ${country}`);
+    
+                    // Add scatter plot points
+                    scatterPlotSvg.selectAll("circle")
+                        .data(values)
+                        .enter().append("circle")
+                        .attr("cx", function (d, i) { return x(years[i]); })
+                        .attr("cy", function (d) { return y(d); })
+                        .attr("r", 8) // Increased scatter point size
+                        .style("fill", "steelblue");
+    
+                   // Add X axis to scatter plot with label
+scatterPlotSvg.append("g")
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(d3.axisBottom(x)
+        .tickFormat(d3.format("d")))
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("x", chartWidth / 2)
+    .attr("y", 40)
+    .style("text-anchor", "middle") // Center the text horizontally
+    .style("font-size", "14px") // Increase font size
+    .text("Year");
 
-        // Initialize projection
-        var projection = d3.geoMercator()
-                           .fitSize([width, height], worldMap);
-
-        // Initialize path generator
-        var path = d3.geoPath()
-                     .projection(projection);
-
-        // Define color scale
-        var colorScale = d3.scaleSequential(d3.interpolateRdYlBu) // Using RdYlBu color scale
-                   .domain([d3.max(data, function(d) { return +d.Total; }), 0]); // Reverse domain
-
-        // Draw map
-        svg.selectAll("path")
-           .data(worldMap.features)
-           .enter().append("path")
-           .attr("d", path)
-           .style("fill", function(d) {
-               // Find corresponding data for this country
-               var countryData = data.find(function(item) {
-                   return item.Country === d.properties.admin;
-               });
-
-               // Return color based on total
-               return countryData ? colorScale(countryData.Total) : "lightgrey";
-           });
-
-        // Create slider
-        var slider = d3.select("#slider")
-                       .on("input", function() {
-                           var year = this.value;
-                           // Update map and year display
-                           updateMap(year);
-                       });
-
-        // Function to update map based on selected year
-        function updateMap(year) {
-            // Update year display
-            d3.select("#year").text(year);
-
-            // Update map colors
-            svg.selectAll("path")
-               .style("fill", function(d) {
-                   var countryData = data.find(function(item) {
-                       return item.Year === year && item.Country === d.properties.admin;
-                   });
-                   return countryData ? colorScale(countryData.Total) : "lightgrey";
-               });
-        }
-
-        // Define zoom behavior
-        var zoom = d3.zoom()
-            .scaleExtent([1, 8]) // Set the scale extent for zooming
-            .on("zoom", zoomed); // Call the zoomed function when zoom event occurs
-
-        // Apply zoom behavior to SVG element
-        svg.call(zoom);
-
-        // Define the zoomed function
-        function zoomed(event) {
-            svg.selectAll("path") // Select all paths
-                .attr("transform", event.transform); // Apply transformation
-        }
-
-        // Zoom In button
-        d3.select("#zoom-in").on("click", function() {
-            svg.transition().call(zoom.scaleBy, 1.5);
-        });
-
-        // Zoom Out button
-        d3.select("#zoom-out").on("click", function() {
-            svg.transition().call(zoom.scaleBy, 0.5);
-        });
-
-        // Generate color legend
-        var legendData = colorScale.ticks(5).reverse(); // Get 5 ticks from the color scale and reverse the order
-
-        // Create legend items
-        var legend = d3.select("#color-legend")
+// Add Y axis to scatter plot with label
+scatterPlotSvg.append("g")
+    .call(d3.axisLeft(y))
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -chartHeight / 2)
+    .attr("y", -60)
+    .style("text-anchor", "middle") // Center the text vertically
+    .style("font-size", "14px") // Increase font size
+    .text("Refugees");
+    
+                    // Add title to scatter plot
+                    scatterPlotSvg.append("text")
+                        .attr("x", chartWidth / 2)
+                        .attr("y", -20)
+                        .attr("text-anchor", "middle")
+                        .style("font-size", "20px") // Increase title font size
+                        .text(`Migration Data Points for ${country}`);
+                }
+    
+                // Generate color legend
+                var legendData = colorScale.ticks(5).reverse();
+    
+                var legend = d3.select("#color-legend")
                     .selectAll(".legend-item")
                     .data(legendData)
                     .enter()
                     .append("div")
                     .attr("class", "legend-item");
-
-        // Add color boxes to legend
-        legend.append("div")
-            .attr("class", "legend-box")
-            .style("background-color", function(d) {
-                return colorScale(d);
+    
+                legend.append("div")
+                    .attr("class", "legend-box")
+                    .style("background-color", function (d) {
+                        return colorScale(d);
+                    });
+    
+                legend.append("span")
+                    .attr("class", "legend-text")
+                    .text(function (d) {
+                        return d;
+                    });
             });
-
-        // Add text to legend
-        legend.append("span")
-            .attr("class", "legend-text")
-            .text(function(d, i) {
-                return legendData[i];
-            });
-        
-    });
-});
-
+        });
     </script>
+
+    
 </body>
 </html>
