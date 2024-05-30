@@ -5,22 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GDP Rate of Countries</title>
   <script src="https://d3js.org/d3.v6.min.js"></script>
-  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="navbar.css" />
   <style>
     h2 {
-      margin: 80px;
       text-align: center;
       font-family: 'Roboto', sans-serif;
     }
-    .node {
-      cursor: pointer;
+
+    .content-main{
+      margin-top:75px;
+      text-align: center;
+      font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
     }
-    .node--leaf {
-      
+
+    .content-main p {
+      margin-bottom: -25px; 
     }
+
+    .red-cursive {
+      color: red; /* Setting text color to red */
+      font-style: italic; /* Applying italic font style */
+      font-family: cursive; /* Applying cursive font family */
+      font-size: 16px;
+    }
+
+    /* New CSS styles to ensure text labels have a higher z-index */
+    .node text {
+      pointer-events: none;
+      z-index: 1; /* Ensure text labels are above tooltip */
+    }
+
+    .node:hover text {
+      pointer-events: auto;
+    }
+
     text {
       font-size: 14px;
       font-family: 'Roboto', sans-serif;
@@ -29,6 +50,7 @@
     #slider-container {
       text-align: center;
       margin-bottom: 20px;
+      margin-top:75px;
     }
     #slider {
       width: 500px;
@@ -63,18 +85,18 @@
       height: 80vh;
     }
     #chart {
-      border: 1px solid #ccc; /* Add border around the chart */
-      margin-right: 20px;
+      border: 2px solid black; /* Add border around the chart */
+  margin-right: 22px;
     }
     #legend-container {
       width: 200px;
-      margin-top: 20px;
+      
     }
     #legend {
-      margin-top: 20px;
+      
     }
     #legend svg {
-      height: 700px; /* Increase the height of the legend */
+      /* Adjust the height of the legend */
     }
     .legend-item:hover {
       cursor: pointer;
@@ -88,10 +110,13 @@
       border-radius: 5px;
       pointer-events: none; /* Ensure tooltips don't interfere with hover events */
       display: none; /* Initially hide tooltip */
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
+  
   <header>
     <nav>
       <a href="home.html" class="logo">Migration</a>
@@ -101,10 +126,24 @@
       </div>
     </nav>
   </header>
-  <h2>Treemap Chart</h2>
+
+  <div class="content-main">
+    <h2>Understanding Global Economic Trends: GDP Rates of Countries with Treemap Chart</h2>
+    <p><b>Explore the economic landscapes of nations across the globe through our interactive treemap visualization of Gross Domestic Product (GDP) rates.</b></p>
+    <br>
+    <p><b>As a complement to our primary visualisation on doctor migration patterns, this treemap offers invaluable insights into how economic conditions influence the movement of healthcare professionals across borders 
+      and it uses the same color scale as used in the heatmap for better comparison</b></p>
+    <br>
+    <p class="red-cursive"><b>How to Use</b></p>
+    <br>
+    <p class="red-cursive"><b>Year Navigation:</b> Utilise the slider to seamlessly navigate through different years and observe the evolving GDP rates of countries.</p>
+    <br>
+    <p class="red-cursive"><b>Hover Interactivity:</b> Hover over any country to reveal detailed information about its GDP per capita, providing valuable insights into its economic status and growth trajectory.</p>
+  </div>
+
   <div id="slider-container">
     <input type="range" id="slider" min="2010" max="2022" step="1" value="2010" />
-    <span id="year-label">2010</span>
+    <span style="font-size: 18px; font-family: arial, sans-serif; font-weight: bold;">Year: <span id="year-label">2010</span></span>
   </div>
   <div id="chart-container">
     <div id="chart"></div>
@@ -112,103 +151,187 @@
       <div id="legend"></div>
     </div>
   </div>
-  <div id="tooltip" class="legend-tooltip"></div>
+  <div class="legend-tooltip"></div>
+
   <script>
-    const width = 850;
-    const height = 550;
-    const treemap = d3.treemap().size([width, height]).paddingInner(1);
-    const svg = d3.select('#chart').append('svg').attr('width', width).attr('height', height);
-    const legendSvg = d3.select('#legend').append('svg');
+   const width = 850;
+const height = 550;
+const treemap = d3.treemap().size([width, height]).paddingInner(1);
+const svg = d3.select('#chart').append('svg').attr('width', width).attr('height', height);
+const legendSvg = d3.select('#legend').append('svg').attr('width', 200).attr('height', 600); // Adjust the width and height as needed
 
-    let nodes;
-    let colorScale;
-    let data;
+let nodes;
+let colorScale;
+let data;
 
-    d3.csv('gdp.csv').then((csvData) => {
-      data = csvData;
-      updateTreemap('2010'); // Initial render
+d3.csv('gdp.csv').then((csvData) => {
+  data = csvData;
+  const allGdpValues = data.map(d => +d['GDP per capita']);
+  const overallMinGDP = d3.min(allGdpValues);
+  const overallMaxGDP = d3.max(allGdpValues);
 
-      const slider = document.getElementById('slider');
-      const yearLabel = document.getElementById('year-label');
+  // Define custom thresholds for the legend based on the overall data
+  const thresholds = d3.range(overallMinGDP, overallMaxGDP, (overallMaxGDP - overallMinGDP) / 5);
 
-      slider.addEventListener('input', function () {
-        const year = this.value;
-        yearLabel.textContent = year;
-        updateTreemap(year);
-      });
+  // Create a threshold scale and reverse the color range
+  colorScale = d3.scaleThreshold()
+    .domain(thresholds)
+    .range(d3.schemeRdYlBu[6].reverse()); // Reverse the color scheme
 
-      function updateTreemap(year) {
-        const newData = data.filter(d => d.Year == year);
-        const countries = [...new Set(newData.map(d => d.Entity))];
-        colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(countries);
-        const root = d3.hierarchy({ children: newData }).sum(d => +d['GDP per capita']).sort((a, b) => b.value - a.value);
-        treemap(root);
+  updateTreemap('2010'); // Initial render
 
-        if (nodes) nodes.remove(); // Remove previous nodes
+  const slider = document.getElementById('slider');
+  const yearLabel = document.getElementById('year-label');
 
-        nodes = svg.selectAll('.node')
-          .data(root.descendants())
-          .enter()
-          .append('g')
-          .attr('class', 'node')
-          .attr('transform', d => `translate(${d.x0},${d.y0})`);
+  slider.addEventListener('input', function () {
+    const year = this.value;
+    yearLabel.textContent = year;
+    updateTreemap(year);
+  });
+
+  function updateTreemap(year) {
+    const newData = data.filter(d => d.Year == year);
+    const root = d3.hierarchy({ children: newData }).sum(d => +d['GDP per capita']).sort((a, b) => b.value - a.value);
+    treemap(root);
+
+    if (nodes) nodes.remove(); // Remove previous nodes
+
+    // Remove previous nodes and labels
+svg.selectAll('.node').remove();
+svg.selectAll('.country-label').remove();
+
+// Create new nodes and labels
+nodes = svg.selectAll('.node')
+  .data(root.descendants())
+  .enter()
+  .append('g')
+  .attr('class', 'node')
+  .attr('transform', d => `translate(${d.x0},${d.y0})`);
 
 nodes
   .append('rect')
   .attr('width', d => d.x1 - d.x0)
   .attr('height', d => d.y1 - d.y0)
-  .attr('fill', d => d.children ? 'none' : colorScale(d.data.Entity))
+  .attr('fill', d => d.children ? 'none' : colorScale(d.data['GDP per capita']))
   .attr('class', d => d.children ? null : 'node--leaf')
-  .on('mouseover', function(d) { handleMouseOver(d, d3.event); })
-  .on('mouseout', handleMouseOut);
-        nodes
-          .append('text')
-          .attr('x', 3)
-          .attr('y', 13)
-          .text(d => d.data.Entity || 'Unknown');
+  .on('mouseover', showTooltip)
+  .on('mousemove', moveTooltip)
+  .on('mouseleave', hideTooltip);
 
-        updateLegend(); // Update legend
+// Append text elements for country names
+nodes.append('text')
+  .attr('x', 3)
+  .attr('y', 13)
+  .text(d => d.data.Entity ? d.data.Entity : 'Unknown')
+  .attr('class', 'country-label');
+
+  updateLegend(overallMinGDP, overallMaxGDP); // Update legend with overall min and max GDP values
+
+    // Remove previous country labels
+  svg.selectAll('.country-label').remove();
+
+  // Append text elements for country names directly to the SVG container
+  svg.selectAll('.country-label')
+    .data(root.descendants())
+    .enter()
+    .append('text')
+    .attr('class', 'country-label')
+    .attr('x', d => d.x0 + 3)
+    .attr('y', d => d.y0 + 13)
+    .text(d => d.data.Entity || 'Unknown');
+
+  }
+
+  function updateLegend(minGDP, maxGDP) {
+    // Remove previous legend items
+    legendSvg.selectAll('*').remove();
+
+    // Define the legend
+    const legend = d3.legendColor()
+      .shapeWidth(50) // Set the shape width to fill the space
+      .shapeHeight(90) // Adjust shape height as needed
+      .shapePadding(0) // No padding between shapes
+      .labels(getLabels(thresholds, minGDP, maxGDP)) // Use custom labels
+      .scale(colorScale);
+
+    // Create a g element for the legend
+    const legendGroup = legendSvg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(20, 20)');
+
+    // Call the legend and render it
+    legendGroup.call(legend);
+  }
+
+  // Helper function to format GDP values for legend labels
+  function formatValue(value) {
+    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }
+
+  // Helper function to generate custom labels for the legend
+  function getLabels(thresholds, minGDP, maxGDP) {
+    const labels = [];
+    const thresholdValues = [...thresholds, maxGDP]; // Include the maximum value
+
+    for (let i = 0; i < thresholdValues.length; i++) {
+      const currentValue = thresholdValues[i];
+      const nextValue = thresholdValues[i + 1];
+
+      if (i === 0) {
+        labels.push(`≥ $${formatValue(currentValue)}`);
+      } else if (i === thresholdValues.length - 1) {
+        labels.push(`< $${formatValue(currentValue)}`);
+      } else {
+        labels.push(`$${formatValue(currentValue)} - $${formatValue(nextValue - 1)}`);
       }
+    }
 
-      function updateLegend() {
-        // Remove previous legend items
-        legendSvg.selectAll('*').remove();
+    return labels;
+  }
 
-        // Define the legend function
-        const legend = d3.legendColor()
-          .shape('rect') // Use rectangles for legend shapes
-          .shapeWidth(15)
-          .shapeHeight(15)
-          .labelWrap(150) // Wrap long labels
-          .scale(colorScale);
+// Function to show tooltip and highlight the hovered node
+function showTooltip(event, d) {
+  const tooltip = d3.select('.legend-tooltip');
+  const gdpPerCapita = d.data['GDP per capita'];
+  const countryName = d.data.Entity;
+  const year = d.data.Year;
+  const tooltipContent = `Country: ${countryName}<br/>GDP Per Capita: $${gdpPerCapita}<br/>(International Rate in Year ${year})`;
 
-        // Call the legend function to create the legend
-        legendSvg.append('g')
-          .attr('class', 'legend')
-          .attr('transform', 'translate(20,20)')
-          .call(legend);
-      }
-function handleMouseOver(d, event) {
-  // Handle mouse over event
-  console.log('Data:', d.data); // Log the data to see its structure
-  const tooltip = d3.select("#tooltip");
-
-  const entity = d.data && d.data.Entity ? d.data.Entity : 'Unknown'; // Check if Entity property exists
-  const gdp = d.data && d.data['GDP per capita'] ? d.data['GDP per capita'] : 'N/A';
-  const tooltipContent = `<strong>Country:</strong> ${entity}<br/><strong>GDP per capita:</strong> ${gdp}`;
-
-  tooltip
-    .style("display", "block")
-    .style("left", (event.pageX + 10) + "px") // Use event.pageX instead of d3.event.pageX
-    .style("top", (event.pageY - 20) + "px")  // Use event.pageY instead of d3.event.pageY
-    .html(tooltipContent);
+  tooltip.html(tooltipContent)
+    .style('display', 'block')
+    .style('left', (event.pageX + 10) + 'px')
+    .style('top', (event.pageY - 10) + 'px')
+    .style('font-family', 'Arial, sans-serif')
+    .style('font-weight', 'bold')
+    .style('font-size', '14px')
+    .style('color', '#333')
+    .style('background-color', '#fff')
+    .style('border', '1px solid #ccc')
+    .style('border-radius', '5px')
+    .style('padding', '10px')
+    .style('box-shadow', '0 2px 4px rgba(0, 0, 0, 0.1)');
 }
-nodes.on('mouseover', function(d) { handleMouseOver(d, d3.event); }) // Pass d3.event as the second argument
-     .on('mouseout', handleMouseOut);
-function handleMouseOut() {
-  // Handle mouse out event
-  d3.select("#tooltip").style("display", "none");
-} });
+
+  // Function to move tooltip
+  function moveTooltip(event) {
+    const tooltip = d3.select('.legend-tooltip');
+    tooltip.style('left', (event.pageX + 10) + 'px')
+      .style('top', (event.pageY - 10) + 'px');
+  }
+
+  // Function to hide tooltip and remove highlight from the node
+function hideTooltip() {
+  const tooltip = d3.select('.legend-tooltip');
+  tooltip.style('display', 'none');
+
+  // Remove highlight from the node
+  d3.select(this)
+    .attr('stroke', 'none');
+}
+
+});
+
   </script>
+
 </body>
 </html>
