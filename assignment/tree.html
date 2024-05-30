@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GDP Rate of Countries</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="navbar.css" />
+  <style>
+    h2 {
+      margin: 80px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+    }
+    .node {
+      cursor: pointer;
+    }
+    .node--leaf {
+      
+    }
+    text {
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+    }
+    #slider-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #slider {
+      width: 500px;
+      height: 20px;
+      background-color: #ddd;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: 0.2s;
+      transition: opacity 0.2s;
+    }
+    #slider:hover {
+      opacity: 1;
+    }
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
+    #slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
+    #chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+    #chart {
+      border: 1px solid #ccc; /* Add border around the chart */
+      margin-right: 20px;
+    }
+    #legend-container {
+      width: 200px;
+      margin-top: 20px;
+    }
+    #legend {
+      margin-top: 20px;
+    }
+    #legend svg {
+      height: 700px; /* Increase the height of the legend */
+    }
+    .legend-item:hover {
+      cursor: pointer;
+      fill-opacity: 0.8; /* Adjust opacity on hover */
+    }
+    .legend-tooltip {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      pointer-events: none; /* Ensure tooltips don't interfere with hover events */
+      display: none; /* Initially hide tooltip */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="home.html" class="logo">Migration</a>
+      <div class="nav-links">
+        <a href="try1.html">Doctor Migration Heatmap</a>
+        <a href="tree.html">GDP</a>
+      </div>
+    </nav>
+  </header>
+  <h2>Treemap Chart</h2>
+  <div id="slider-container">
+    <input type="range" id="slider" min="2010" max="2022" step="1" value="2010" />
+    <span id="year-label">2010</span>
+  </div>
+  <div id="chart-container">
+    <div id="chart"></div>
+    <div id="legend-container">
+      <div id="legend"></div>
+    </div>
+  </div>
+  <div id="tooltip" class="legend-tooltip"></div>
+  <script>
+    const width = 850;
+    const height = 550;
+    const treemap = d3.treemap().size([width, height]).paddingInner(1);
+    const svg = d3.select('#chart').append('svg').attr('width', width).attr('height', height);
+    const legendSvg = d3.select('#legend').append('svg');
+
+    let nodes;
+    let colorScale;
+    let data;
+
+    d3.csv('gdp.csv').then((csvData) => {
+      data = csvData;
+      updateTreemap('2010'); // Initial render
+
+      const slider = document.getElementById('slider');
+      const yearLabel = document.getElementById('year-label');
+
+      slider.addEventListener('input', function () {
+        const year = this.value;
+        yearLabel.textContent = year;
+        updateTreemap(year);
+      });
+
+      function updateTreemap(year) {
+        const newData = data.filter(d => d.Year == year);
+        const countries = [...new Set(newData.map(d => d.Entity))];
+        colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(countries);
+        const root = d3.hierarchy({ children: newData }).sum(d => +d['GDP per capita']).sort((a, b) => b.value - a.value);
+        treemap(root);
+
+        if (nodes) nodes.remove(); // Remove previous nodes
+
+        nodes = svg.selectAll('.node')
+          .data(root.descendants())
+          .enter()
+          .append('g')
+          .attr('class', 'node')
+          .attr('transform', d => `translate(${d.x0},${d.y0})`);
+
+nodes
+  .append('rect')
+  .attr('width', d => d.x1 - d.x0)
+  .attr('height', d => d.y1 - d.y0)
+  .attr('fill', d => d.children ? 'none' : colorScale(d.data.Entity))
+  .attr('class', d => d.children ? null : 'node--leaf')
+  .on('mouseover', function(d) { handleMouseOver(d, d3.event); })
+  .on('mouseout', handleMouseOut);
+        nodes
+          .append('text')
+          .attr('x', 3)
+          .attr('y', 13)
+          .text(d => d.data.Entity || 'Unknown');
+
+        updateLegend(); // Update legend
+      }
+
+      function updateLegend() {
+        // Remove previous legend items
+        legendSvg.selectAll('*').remove();
+
+        // Define the legend function
+        const legend = d3.legendColor()
+          .shape('rect') // Use rectangles for legend shapes
+          .shapeWidth(15)
+          .shapeHeight(15)
+          .labelWrap(150) // Wrap long labels
+          .scale(colorScale);
+
+        // Call the legend function to create the legend
+        legendSvg.append('g')
+          .attr('class', 'legend')
+          .attr('transform', 'translate(20,20)')
+          .call(legend);
+      }
+function handleMouseOver(d, event) {
+  // Handle mouse over event
+  console.log('Data:', d.data); // Log the data to see its structure
+  const tooltip = d3.select("#tooltip");
+
+  const entity = d.data && d.data.Entity ? d.data.Entity : 'Unknown'; // Check if Entity property exists
+  const gdp = d.data && d.data['GDP per capita'] ? d.data['GDP per capita'] : 'N/A';
+  const tooltipContent = `<strong>Country:</strong> ${entity}<br/><strong>GDP per capita:</strong> ${gdp}`;
+
+  tooltip
+    .style("display", "block")
+    .style("left", (event.pageX + 10) + "px") // Use event.pageX instead of d3.event.pageX
+    .style("top", (event.pageY - 20) + "px")  // Use event.pageY instead of d3.event.pageY
+    .html(tooltipContent);
+}
+nodes.on('mouseover', function(d) { handleMouseOver(d, d3.event); }) // Pass d3.event as the second argument
+     .on('mouseout', handleMouseOut);
+function handleMouseOut() {
+  // Handle mouse out event
+  d3.select("#tooltip").style("display", "none");
+} });
+  </script>
+</body>
+</html>
