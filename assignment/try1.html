@@ -9,161 +9,161 @@
     <link rel="stylesheet" href="navbar.css">
     <style>
         /* Add your CSS styling here */
-        /* Map container */
-        .map-container {
-            margin-top: 80px;
-            border: 5px solid black;
-            padding: 20px;
-            width: 900px;
-            margin-left: 5px;
-            position: relative;
-            display: flex;
-        }
+    /* Map container */
+    .map-container {
+        margin-top: 80px;
+        border: 5px solid black;
+        padding: 20px;
+        width: 900px;
+        margin-left: 5px;
+        position: relative;
+        display: flex;
+    }
 
-        #map {
-            position: relative;
-            width: 940px;
-            margin-left: -20px;
-            height: 700px;
-        }
+    #map {
+        position: relative;
+        width: 940px;
+        margin-left: -20px;
+        height: 700px;
+    }
 
-        .content-main{
-            margin-top:95px;
-            text-align: center;
-            font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
-        }
+    .content-main{
+        margin-top:95px;
+        text-align: center;
+        font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
+    }
 
-        .content-main p {
-            margin-bottom: -15px; 
-            font-weight: bold;
-        }
+    .content-main p {
+        margin-bottom: -15px; 
+        font-weight: bold;
+    }
 
-        .red-cursive {
-            color: red; /* Setting text color to red */
-            font-style: italic; /* Applying italic font style */
-            font-family: cursive; /* Applying cursive font family */
-            font-size: 16px;
-        }
+    .red-cursive {
+        color: red; /* Setting text color to red */
+        font-style: italic; /* Applying italic font style */
+        font-family: cursive; /* Applying cursive font family */
+        font-size: 16px;
+    }
 
-        .legend {
-            position: absolute;
-            top: 700px;
-            left: 50%;
-            transform: translateX(-50%);
-            align-items: center;
-            display: flex;
-        }
+    .legend {
+        position: absolute;
+        top: 700px;
+        left: 50%;
+        transform: translateX(-50%);
+        align-items: center;
+        display: flex;
+    }
 
-        .legend-item {
-            align-items: center;  
-        }
+    .legend-item {
+        align-items: center;  
+    }
 
-        .legend-box {
-            width: 100px;
-            height: 20px;
-   
-        }
+    .legend-box {
+        width: 100px;
+        height: 20px;
 
-        .legend-text {
-            font-size: 12px;
+    }
 
-        }
+    .legend-text {
+        font-size: 12px;
 
-        .controls {
-            display: flex;
-            margin-bottom: 40px;
-            margin-left: 0px;
-        }
+    }
 
-        .tooltip {
-            position: absolute;
-            background-color: white;
-            border: 1px solid black;
-            padding: 10px;
-            pointer-events: none;
-        }
+    .controls {
+        display: flex;
+        margin-bottom: 40px;
+        margin-left: 0px;
+    }
 
-        /* Add your CSS styling here */
-        .scatter-plot {
-            background-color: white;
-            border: 1px solid black;
-            margin: 10px;
-            padding: 10px;
-            width: 450px;
-            height: 300px;
-            display: inline-block;
-        }
+    .tooltip {
+        position: absolute;
+        background-color: white;
+        border: 1px solid black;
+        padding: 10px;
+        pointer-events: none;
+    }
 
-        .line-chart {
-            background-color: white;
-            border: 1px solid black;
-            margin: 10px;
-            padding: 10px;
-            width: 450px;
-            height: 300px;
-            display: inline-block;
-        }
+    /* Add your CSS styling here */
+    .scatter-plot {
+        background-color: white;
+        border: 1px solid black;
+        margin: 10px;
+        padding: 10px;
+        width: 450px;
+        height: 300px;
+        display: inline-block;
+    }
 
-        .chart {
-            width: 600px;
-            height: 500px;
-        }
+    .line-chart {
+        background-color: white;
+        border: 1px solid black;
+        margin: 10px;
+        padding: 10px;
+        width: 450px;
+        height: 300px;
+        display: inline-block;
+    }
 
-        .axis-label {
-            font-size: 16px;
-            font-weight: bold;
-        }
+    .chart {
+        width: 600px;
+        height: 500px;
+    }
 
-        .chart-title {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        /* Dropdown styling */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
+    .axis-label {
+        font-size: 16px;
+        font-weight: bold;
+    }
 
-/* Arrow styling */
-.arrow {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #333; /* Arrow color */
-    pointer-events: none;
-}
+    .chart-title {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    /* Dropdown styling */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
 
-/* Dropdown menu styling */
-#heatmap-type {
-    padding: 10px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 16px;
-    border: 3px solid #333; 
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    outline: none;
-    transition: border-color 0.3s;
-    width: 200px; /* Increased width */
-    font-weight: bold;
-}
+    /* Arrow styling */
+    .arrow {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #333; /* Arrow color */
+        pointer-events: none;
+    }
 
-#heatmap-type:hover {
-    border-color: #555;
-}
+    /* Dropdown menu styling */
+    #heatmap-type {
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        border: 3px solid #333; 
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
+        transition: border-color 0.3s;
+        width: 200px; /* Increased width */
+        font-weight: bold;
+    }
 
-#heatmap-type:focus {
-    border-color: #007bff;
-}
+    #heatmap-type:hover {
+        border-color: #555;
+    }
+
+    #heatmap-type:focus {
+        border-color: #007bff;
+    }
 
     </style>
 </head>
@@ -179,15 +179,15 @@
     </header>
 
     <div class="content-main">
-        <h1>Total Migration of Doctors Annually to OECD Countries</h1>
-            <p>Gain insights into the patterns, fluctuations, and implications of doctor migration, informing healthcare policies and 
-            workforce planning.</p>
-            <br>
-            <p class="red-cursive">Use the slider to navigate through years and uncover valuable trends</p>
-            <br>
-            <p class="red-cursive">Hover on any country and check its trend through scatter plot and line charts</p>
-            <br>
-            <p class="red-cursive">Select from dropdown button for color blind or default view as per your needs</p>
+    <h1>Total Migration of Doctors Annually to OECD Countries</h1>
+        <p>Gain insights into the patterns, fluctuations, and implications of doctor migration, informing healthcare policies and 
+        workforce planning.</p>
+        <br>
+        <p class="red-cursive">Use the slider to navigate through years and uncover valuable trends.</p>
+        <br>
+        <p class="red-cursive">Hover on any country and check its trend through scatter plot and line charts</p>
+        <br>
+        <p class="red-cursive">Select from dropdown button for color blind or default view as per your needs</p>
     </div>
 
     <div class="map-container" style="display: flex;">
@@ -211,86 +211,92 @@
         </div>
         <div id="line-chart-container"></div>
     </div>
+
+    <footer>
+        <p>Created by Angad Singh Bajwa - (10316497) | Sridherr Ganesh - ()</p>
+        <p>Data Visualisation 2024</p>
+    </footer>
+
     <script>
-        // Load world map geojson
-        d3.json("custom.geo.json").then(function (worldMap) {
-            // Load choropleth data
-            d3.csv("choropleth_map.csv").then(function (data) {
-                // Remove data for the year 2022
-                data = data.filter(function (d) {
-                    return +d.Year <= 2021;
+    // Load world map geojson
+    d3.json("custom.geo.json").then(function (worldMap) {
+        // Load choropleth data
+        d3.csv("choropleth_map.csv").then(function (data) {
+            // Remove data for the year 2022
+            data = data.filter(function (d) {
+                return +d.Year <= 2021;
+            });
+
+            // Initialize map parameters
+            var width = 960;
+            var height = 600;
+
+            // Create SVG element
+            var svg = d3.select("#map")
+                .attr("width", width)
+                .attr("height", height);
+
+            // Initialize projection
+            var projection = d3.geoMercator()
+                .fitSize([width, height], worldMap);
+
+            // Initialize path generator
+            var path = d3.geoPath()
+                .projection(projection);
+
+            // Define color scale for original view
+            var originalColorScale = d3.scaleSequential(d3.interpolateRdYlBu)
+                .domain([d3.max(data, function (d) {
+                    return +d.Total;
+                }), 0]);
+
+            // Define color scale for color-blind view
+            var colorBlindColorScale = d3.scaleSequential(d3.interpolateViridis)
+                .domain([d3.max(data, function (d) {
+                    return +d.Total;
+                }), 0]);
+
+            // Create slider
+            var slider = d3.select("#slider")
+                .on("input", function () {
+                    var year = this.value;
+                    updateMap(year);
+        });
+
+    // Function to update map based on selected year and heatmap type
+    function updateMap(year) {
+        d3.select("#year").text(year);
+
+        var selectedOption = document.getElementById("heatmap-type").value;
+
+        var selectedColorScale = selectedOption === "original" ? originalColorScale : colorBlindColorScale;
+
+        svg.selectAll("path")
+            .style("fill", function (d) {
+                var countryData = data.find(function (item) {
+                    return item.Year === year && item.Country === d.properties.admin && !isNaN(+item.Total);
                 });
+                return countryData ? selectedColorScale(+countryData.Total) : "lightgrey";
+            });
 
-                // Initialize map parameters
-                var width = 960;
-                var height = 600;
+        updateLegend(selectedColorScale);
+    }
 
-                // Create SVG element
-                var svg = d3.select("#map")
-                    .attr("width", width)
-                    .attr("height", height);
+    // Draw map
+    var paths = svg.selectAll("path")
+        .data(worldMap.features)
+        .enter().append("path")
+        .attr("d", path)
+        .style("fill", function (d) {
+            var countryData = data.find(function (item) {
+                return item.Country === d.properties.admin;
+            });
+            return countryData ? originalColorScale(countryData.Total) : "lightgrey";
+        })
+    .on("mouseover", handleMouseOver)
+    .on("mouseout", handleMouseOut);
 
-                // Initialize projection
-                var projection = d3.geoMercator()
-                    .fitSize([width, height], worldMap);
-
-                // Initialize path generator
-                var path = d3.geoPath()
-                    .projection(projection);
-
-                // Define color scale for original view
-                var originalColorScale = d3.scaleSequential(d3.interpolateRdYlBu)
-                    .domain([d3.max(data, function (d) {
-                        return +d.Total;
-                    }), 0]);
-
-                // Define color scale for color-blind view
-                var colorBlindColorScale = d3.scaleSequential(d3.interpolateViridis)
-                    .domain([d3.max(data, function (d) {
-                        return +d.Total;
-                    }), 0]);
-
-                // Create slider
-                var slider = d3.select("#slider")
-                    .on("input", function () {
-                        var year = this.value;
-                        updateMap(year);
-                    });
-
-                // Function to update map based on selected year and heatmap type
-                function updateMap(year) {
-                    d3.select("#year").text(year);
-
-                    var selectedOption = document.getElementById("heatmap-type").value;
-
-                    var selectedColorScale = selectedOption === "original" ? originalColorScale : colorBlindColorScale;
-
-                    svg.selectAll("path")
-                        .style("fill", function (d) {
-                            var countryData = data.find(function (item) {
-                                return item.Year === year && item.Country === d.properties.admin && !isNaN(+item.Total);
-                            });
-                            return countryData ? selectedColorScale(+countryData.Total) : "lightgrey";
-                        });
-
-                    updateLegend(selectedColorScale);
-                }
-
-                // Draw map
-                var paths = svg.selectAll("path")
-                    .data(worldMap.features)
-                    .enter().append("path")
-                    .attr("d", path)
-                    .style("fill", function (d) {
-                        var countryData = data.find(function (item) {
-                            return item.Country === d.properties.admin;
-                        });
-                        return countryData ? originalColorScale(countryData.Total) : "lightgrey";
-                    })
-                    .on("mouseover", handleMouseOver)
-                    .on("mouseout", handleMouseOut);
-
-                    function handleMouseOver(event, d) {
+    function handleMouseOver(event, d) {
     // Get the current year from the slider
     var year = d3.select("#slider").node().value;
 
@@ -315,220 +321,221 @@
 
     // Show charts
     showCharts(d.properties.admin, data);
-}
+    }
 
-                function handleMouseOut() {
-                    // Remove tooltip
-                    d3.select(".tooltip").remove();
+    function handleMouseOut() {
+        // Remove tooltip
+        d3.select(".tooltip").remove();
 
-                    // Remove charts
-                    d3.select("#line-chart-container").selectAll("*").remove();
-                }
+        // Remove charts
+        d3.select("#line-chart-container").selectAll("*").remove();
+    }
 
-                // Function to show charts
-                function showCharts(country, data) {
-                    // Filter data for the selected country
-                    var countryData = data.filter(function (d) {
-                        return d.Country === country && d.Total !== "NA";
-                    });
-
-                    // Extract years and values
-                    var years = countryData.map(function (d) {
-                        return +d.Year;
-                    });
-                    var values = countryData.map(function (d) {
-                        return +d.Total;
-                    });
-
-                    // Set up dimensions for the charts
-                    const margin = { top: 50, right: 50, bottom: 50, left: 80 };
-                    const chartWidth = 510 - margin.left - margin.right;
-                    const chartHeight = 350 - margin.top - margin.bottom;
-
-                    // Create SVG element for line chart
-                    const lineChartContainer = d3.select("#line-chart-container")
-                        .append("div")
-                        .attr("class", "line-chart")
-                        .style("width", chartWidth + margin.left + margin.right + "px")
-                        .style("height", chartHeight + margin.top + margin.bottom + "px");
-
-                    lineChartContainer.append("div")
-                        .attr("class", "chart-title")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "18px")
-        .style("font-weight", "bold")
-                        .text(`Migration trend for ${country}`);
-
-                    const lineChartSvg = lineChartContainer.append("svg")
-                        .attr("width", chartWidth + margin.left + margin.right)
-                        .attr("height", chartHeight + margin.top + margin.bottom)
-                        .append("g")
-                        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-                    // Create SVG element for scatter plot
-                    const scatterPlotContainer = d3.select("#line-chart-container")
-                        .append("div")
-                        .attr("class", "scatter-plot")
-                        .style("width", chartWidth + margin.left + margin.right + "px")
-                        .style("height", chartHeight + margin.top + margin.bottom + "px");
-
-                    scatterPlotContainer.append("div")
-                        .attr("class", "chart-title")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "18px")
-        .style("font-weight", "bold")
-                        .text(`Migration trend for ${country}`);
-
-                    const scatterPlotSvg = scatterPlotContainer.append("svg")
-                        .attr("width", chartWidth + margin.left + margin.right)
-                        .attr("height", chartHeight + margin.top + margin.bottom)
-                        .append("g")
-                        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-                    // Define scales and axes for line chart
-                    const xScaleLine = d3.scaleLinear()
-                        .domain(d3.extent(years))
-                        .range([0, chartWidth]);
-
-                    const yScaleLine = d3.scaleLinear()
-                        .domain([0, d3.max(values)])
-                        .range([chartHeight, 0]);
-
-                    const xAxisLine = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
-                    const yAxisLine = d3.axisLeft(yScaleLine);
-
-                    // Define scales and axes for scatter plot
-                    const xScaleScatter = d3.scaleLinear()
-                        .domain(d3.extent(years))
-                        .range([0, chartWidth]);
-
-                    const yScaleScatter = d3.scaleLinear()
-                        .domain([0, d3.max(values)])
-                        .range([chartHeight, 0]);
-
-                    const xAxisScatter = d3.axisBottom(xScaleScatter).tickFormat(d3.format("d"));
-                    const yAxisScatter = d3.axisLeft(yScaleScatter);
-
-                    // Add line to line chart
-                    const line = d3.line()
-                        .x((d, i) => xScaleLine(years[i]))
-                        .y(d => yScaleLine(d));
-
-                    lineChartSvg.append("path")
-                        .datum(values)
-                        .attr("class", "line")
-                        .attr("d", line)
-                        .attr("fill", "none")
-                        .attr("stroke", "blue")
-                        .attr("stroke-width", 2);
-
-                    // Add axes to line chart
-                    lineChartSvg.append("g")
-                        .attr("transform", `translate(0, ${chartHeight})`)
-                        .call(xAxisLine);
-
-                    lineChartSvg.append("g")
-                        .call(yAxisLine);
-
-                    // Add axis labels to line chart
-                    lineChartSvg.append("text")
-                        .attr("class", "axis-label")
-                        .attr("text-anchor", "middle")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-                        .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + margin.bottom - 10})`)
-                        .text("Year");
-
-                    lineChartSvg.append("text")
-                        .attr("class", "axis-label")
-                        .attr("text-anchor", "middle")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-                        .attr("transform", `translate(${-margin.left + 20}, ${chartHeight / 2})rotate(-90)`)
-                        .text("Total Migration");
-
-                    // Add scatter plot points
-                    scatterPlotSvg.selectAll("circle")
-                        .data(values)
-                        .enter().append("circle")
-                        .attr("cx", (d, i) => xScaleScatter(years[i]))
-                        .attr("cy", d => yScaleScatter(d))
-                        .attr("r", 5)
-                        .attr("fill", "red");
-
-                    // Add axes to scatter plot
-                    scatterPlotSvg.append("g")
-                        .attr("transform", `translate(0, ${chartHeight})`)
-                        .call(xAxisScatter);
-
-                    scatterPlotSvg.append("g")
-                        .call(yAxisScatter);
-
-                    // Add axis labels to scatter plot
-                    scatterPlotSvg.append("text")
-                        .attr("class", "axis-label")
-                        .attr("text-anchor", "middle")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-                        .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + margin.bottom - 10})`)
-                        .text("Year");
-
-                    scatterPlotSvg.append("text")
-                        .attr("class", "axis-label")
-                        .attr("text-anchor", "middle")
-                        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-                        .attr("transform", `translate(${-margin.left + 20}, ${chartHeight / 2})rotate(-90)`)
-                        .text("Total Migration");
-                }
-
-                // Function to update legend
-                function updateLegend(colorScale) {
-                    var legend = d3.select("#color-legend");
-                    legend.selectAll("*").remove();
-
-                    var legendData = d3.range(6).map(function (d) {
-                        return colorScale.domain()[0] / 5 * d;
-                    });
-
-                    var legendItem = legend.selectAll(".legend-item")
-                        .data(legendData)
-                        .enter().append("div")
-                        .attr("class", "legend-item")
-                        .style("text-align", "center");
-
-                    legendItem.append("div")
-                        .attr("class", "legend-box")
-                        .style("background-color", function (d) {
-                            return colorScale(d);
-                        });
-
-                    legendItem.append("div")
-                    .attr("class", "legend-text")
-        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-                        
-                        .text(function (d) {
-                            return Math.round(d);
-                        });
-                }
-
-                // Initial update
-                updateMap("2010");
-
-                // Update map when heatmap type changes
-                d3.select("#heatmap-type")
-                    .on("change", function () {
-                        var year = slider.property("value");
-                        updateMap(year);
-                    });
-            });
+    // Function to show charts
+    function showCharts(country, data) {
+        // Filter data for the selected country
+        var countryData = data.filter(function (d) {
+            return d.Country === country && d.Total !== "NA";
         });
+
+        // Extract years and values
+        var years = countryData.map(function (d) {
+            return +d.Year;
+        });
+        var values = countryData.map(function (d) {
+            return +d.Total;
+        });
+
+        // Set up dimensions for the charts
+        const margin = { top: 50, right: 50, bottom: 50, left: 80 };
+        const chartWidth = 510 - margin.left - margin.right;
+        const chartHeight = 350 - margin.top - margin.bottom;
+
+        // Create SVG element for line chart
+        const lineChartContainer = d3.select("#line-chart-container")
+            .append("div")
+            .attr("class", "line-chart")
+            .style("width", chartWidth + margin.left + margin.right + "px")
+            .style("height", chartHeight + margin.top + margin.bottom + "px");
+
+        lineChartContainer.append("div")
+            .attr("class", "chart-title")
+            .style("font-family", "Arial, sans-serif")
+            .style("font-size", "18px")
+            .style("font-weight", "bold")
+            .text(`Migration trend for ${country}`);
+
+        const lineChartSvg = lineChartContainer.append("svg")
+            .attr("width", chartWidth + margin.left + margin.right)
+            .attr("height", chartHeight + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        // Create SVG element for scatter plot
+        const scatterPlotContainer = d3.select("#line-chart-container")
+            .append("div")
+            .attr("class", "scatter-plot")
+            .style("width", chartWidth + margin.left + margin.right + "px")
+            .style("height", chartHeight + margin.top + margin.bottom + "px");
+
+        scatterPlotContainer.append("div")
+            .attr("class", "chart-title")
+            .style("font-family", "Arial, sans-serif")
+            .style("font-size", "18px")
+            .style("font-weight", "bold")
+            .text(`Migration trend for ${country}`);
+
+        const scatterPlotSvg = scatterPlotContainer.append("svg")
+            .attr("width", chartWidth + margin.left + margin.right)
+            .attr("height", chartHeight + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        // Define scales and axes for line chart
+        const xScaleLine = d3.scaleLinear()
+            .domain(d3.extent(years))
+            .range([0, chartWidth]);
+
+        const yScaleLine = d3.scaleLinear()
+            .domain([0, d3.max(values)])
+            .range([chartHeight, 0]);
+
+        const xAxisLine = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
+        const yAxisLine = d3.axisLeft(yScaleLine);
+
+        // Define scales and axes for scatter plot
+        const xScaleScatter = d3.scaleLinear()
+            .domain(d3.extent(years))
+            .range([0, chartWidth]);
+
+        const yScaleScatter = d3.scaleLinear()
+            .domain([0, d3.max(values)])
+            .range([chartHeight, 0]);
+
+        const xAxisScatter = d3.axisBottom(xScaleScatter).tickFormat(d3.format("d"));
+        const yAxisScatter = d3.axisLeft(yScaleScatter);
+
+        // Add line to line chart
+        const line = d3.line()
+            .x((d, i) => xScaleLine(years[i]))
+            .y(d => yScaleLine(d));
+
+        lineChartSvg.append("path")
+            .datum(values)
+            .attr("class", "line")
+            .attr("d", line)
+            .attr("fill", "none")
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2);
+
+            // Add axes to line chart
+            lineChartSvg.append("g")
+                .attr("transform", `translate(0, ${chartHeight})`)
+                .call(xAxisLine);
+
+            lineChartSvg.append("g")
+                .call(yAxisLine);
+
+            // Add axis labels to line chart
+            lineChartSvg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + margin.bottom - 10})`)
+                .text("Year");
+
+            lineChartSvg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .attr("transform", `translate(${-margin.left + 20}, ${chartHeight / 2})rotate(-90)`)
+                .text("Total Migration");
+
+            // Add scatter plot points
+            scatterPlotSvg.selectAll("circle")
+                .data(values)
+                .enter().append("circle")
+                .attr("cx", (d, i) => xScaleScatter(years[i]))
+                .attr("cy", d => yScaleScatter(d))
+                .attr("r", 5)
+                .attr("fill", "red");
+
+            // Add axes to scatter plot
+            scatterPlotSvg.append("g")
+                .attr("transform", `translate(0, ${chartHeight})`)
+                .call(xAxisScatter);
+
+            scatterPlotSvg.append("g")
+                .call(yAxisScatter);
+
+            // Add axis labels to scatter plot
+            scatterPlotSvg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + margin.bottom - 10})`)
+                .text("Year");
+
+            scatterPlotSvg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .style("font-family", "Arial, sans-serif")
+                .style("font-size", "14px")
+                .style("font-weight", "bold")
+                .attr("transform", `translate(${-margin.left + 20}, ${chartHeight / 2})rotate(-90)`)
+                .text("Total Migration");
+                }
+
+        // Function to update legend
+        function updateLegend(colorScale) {
+            var legend = d3.select("#color-legend");
+            legend.selectAll("*").remove();
+
+            var legendData = d3.range(6).map(function (d) {
+                return colorScale.domain()[0] / 5 * d;
+            });
+
+            var legendItem = legend.selectAll(".legend-item")
+                .data(legendData)
+                .enter().append("div")
+                .attr("class", "legend-item")
+                .style("text-align", "center");
+
+            legendItem.append("div")
+                .attr("class", "legend-box")
+                .style("background-color", function (d) {
+                    return colorScale(d);
+                });
+
+            legendItem.append("div")
+            .attr("class", "legend-text")
+            .style("font-family", "Arial, sans-serif")
+            .style("font-size", "14px")
+            .style("font-weight", "bold")
+                            
+            .text(function (d) {
+                return Math.round(d);
+            });
+        }
+
+    // Initial update
+    updateMap("2010");
+
+    // Update map when heatmap type changes
+    d3.select("#heatmap-type")
+        .on("change", function () {
+            var year = slider.property("value");
+            updateMap(year);
+            });
+    });
+});
+
     </script>
 </body>
 </html>
