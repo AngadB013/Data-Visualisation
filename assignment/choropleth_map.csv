@@ -1,0 +1,337 @@
+Year,Country,Total
+2010,Australia,NA
+2010,Austria,191
+2010,Belgium,504
+2010,Canada,2437
+2010,Czechia,103
+2010,Denmark,296
+2010,Estonia,11
+2010,Finland,226
+2010,France,NA
+2010,Germany,1426
+2010,Greece,NA
+2010,Hungary,35
+2010,Ireland,683
+2010,Israel,377
+2010,Italy,149
+2010,South Korea,1
+2010,Latvia,39
+2010,Lithuania,NA
+2010,Netherlands,226
+2010,New Zealand,1168
+2010,Norway,1309
+2010,Poland,60
+2010,Slovenia,76
+2010,Spain,6800
+2010,Sweden,810
+2010,Switzerland,1892
+2010,United Kingdom,5945
+2010,United States of America,7318
+2011,Australia,NA
+2011,Austria,179
+2011,Belgium,665
+2011,Canada,2532
+2011,Czechia,158
+2011,Denmark,238
+2011,Estonia,20
+2011,Finland,244
+2011,France,1490
+2011,Germany,1900
+2011,Greece,NA
+2011,Hungary,51
+2011,Ireland,855
+2011,Israel,539
+2011,Italy,129
+2011,South Korea,1
+2011,Latvia,16
+2011,Lithuania,NA
+2011,Netherlands,158
+2011,New Zealand,1218
+2011,Norway,1300
+2011,Poland,70
+2011,Slovenia,129
+2011,Spain,5525
+2011,Sweden,739
+2011,Switzerland,2015
+2011,United Kingdom,5189
+2011,United States of America,7211
+2012,Australia,NA
+2012,Austria,196
+2012,Belgium,684
+2012,Canada,2754
+2012,Czechia,195
+2012,Denmark,184
+2012,Estonia,19
+2012,Finland,227
+2012,France,1357
+2012,Germany,2225
+2012,Greece,77
+2012,Hungary,78
+2012,Ireland,783
+2012,Israel,527
+2012,Italy,134
+2012,South Korea,2
+2012,Latvia,25
+2012,Lithuania,NA
+2012,Netherlands,177
+2012,New Zealand,1145
+2012,Norway,1603
+2012,Poland,79
+2012,Slovenia,68
+2012,Spain,3491
+2012,Sweden,754
+2012,Switzerland,2179
+2012,United Kingdom,5951
+2012,United States of America,7325
+2013,Australia,NA
+2013,Austria,224
+2013,Belgium,481
+2013,Canada,2948
+2013,Czechia,210
+2013,Denmark,198
+2013,Estonia,24
+2013,Finland,260
+2013,France,1419
+2013,Germany,1964
+2013,Greece,83
+2013,Hungary,54
+2013,Ireland,832
+2013,Israel,598
+2013,Italy,98
+2013,South Korea,3
+2013,Latvia,25
+2013,Lithuania,NA
+2013,Netherlands,93
+2013,New Zealand,1063
+2013,Norway,2310
+2013,Poland,137
+2013,Slovenia,36
+2013,Spain,2432
+2013,Sweden,864
+2013,Switzerland,2519
+2013,United Kingdom,5459
+2013,United States of America,6475
+2014,Australia,2685
+2014,Austria,263
+2014,Belgium,558
+2014,Canada,2899
+2014,Czechia,221
+2014,Denmark,283
+2014,Estonia,21
+2014,Finland,225
+2014,France,1615
+2014,Germany,1730
+2014,Greece,78
+2014,Hungary,82
+2014,Ireland,871
+2014,Israel,648
+2014,Italy,60
+2014,South Korea,6
+2014,Latvia,6
+2014,Lithuania,6
+2014,Netherlands,137
+2014,New Zealand,947
+2014,Norway,1304
+2014,Poland,157
+2014,Slovenia,29
+2014,Spain,2439
+2014,Sweden,940
+2014,Switzerland,2123
+2014,United Kingdom,5939
+2014,United States of America,6564
+2015,Australia,2717
+2015,Austria,242
+2015,Belgium,566
+2015,Canada,2849
+2015,Czechia,241
+2015,Denmark,282
+2015,Estonia,29
+2015,Finland,213
+2015,France,1568
+2015,Germany,1530
+2015,Greece,79
+2015,Hungary,133
+2015,Ireland,1777
+2015,Israel,777
+2015,Italy,89
+2015,South Korea,6
+2015,Latvia,3
+2015,Lithuania,5
+2015,Netherlands,161
+2015,New Zealand,854
+2015,Norway,1281
+2015,Poland,104
+2015,Slovenia,37
+2015,Spain,1383
+2015,Sweden,723
+2015,Switzerland,2183
+2015,United Kingdom,4980
+2015,United States of America,6594
+2016,Australia,2726
+2016,Austria,225
+2016,Belgium,500
+2016,Canada,2998
+2016,Czechia,258
+2016,Denmark,267
+2016,Estonia,21
+2016,Finland,198
+2016,France,1387
+2016,Germany,1430
+2016,Greece,98
+2016,Hungary,109
+2016,Ireland,1819
+2016,Israel,722
+2016,Italy,100
+2016,South Korea,7
+2016,Latvia,3
+2016,Lithuania,8
+2016,Netherlands,123
+2016,New Zealand,973
+2016,Norway,1325
+2016,Poland,174
+2016,Slovenia,93
+2016,Spain,2876
+2016,Sweden,785
+2016,Switzerland,2355
+2016,United Kingdom,5649
+2016,United States of America,6745
+2017,Australia,2695
+2017,Austria,238
+2017,Belgium,598
+2017,Canada,2863
+2017,Czechia,311
+2017,Denmark,275
+2017,Estonia,22
+2017,Finland,203
+2017,France,1253
+2017,Germany,1287
+2017,Greece,161
+2017,Hungary,111
+2017,Ireland,1685
+2017,Israel,881
+2017,Italy,150
+2017,South Korea,11
+2017,Latvia,8
+2017,Lithuania,15
+2017,Netherlands,196
+2017,New Zealand,1026
+2017,Norway,1505
+2017,Poland,172
+2017,Slovenia,33
+2017,Spain,3146
+2017,Sweden,658
+2017,Switzerland,2268
+2017,United Kingdom,6331
+2017,United States of America,7033
+2018,Australia,2954
+2018,Austria,209
+2018,Belgium,461
+2018,Canada,3289
+2018,Czechia,250
+2018,Denmark,246
+2018,Estonia,24
+2018,Finland,194
+2018,France,1110
+2018,Germany,1296
+2018,Greece,208
+2018,Hungary,137
+2018,Ireland,1395
+2018,Israel,1056
+2018,Italy,204
+2018,South Korea,25
+2018,Latvia,5
+2018,Lithuania,9
+2018,Netherlands,145
+2018,New Zealand,1055
+2018,Norway,1116
+2018,Poland,240
+2018,Slovenia,43
+2018,Spain,4008
+2018,Sweden,760
+2018,Switzerland,2003
+2018,United Kingdom,8170
+2018,United States of America,7344
+2019,Australia,2993
+2019,Austria,257
+2019,Belgium,553
+2019,Canada,2701
+2019,Czechia,105
+2019,Denmark,272
+2019,Estonia,9
+2019,Finland,231
+2019,France,925
+2019,Germany,1349
+2019,Greece,459
+2019,Hungary,123
+2019,Ireland,1422
+2019,Israel,1050
+2019,Italy,260
+2019,South Korea,20
+2019,Latvia,2
+2019,Lithuania,6
+2019,Netherlands,420
+2019,New Zealand,1034
+2019,Norway,1068
+2019,Poland,365
+2019,Slovenia,82
+2019,Spain,6354
+2019,Sweden,775
+2019,Switzerland,1875
+2019,United Kingdom,11020
+2019,United States of America,7483
+2020,Australia,2009
+2020,Austria,224
+2020,Belgium,483
+2020,Canada,2685
+2020,Czechia,148
+2020,Denmark,250
+2020,Estonia,12
+2020,Finland,236
+2020,France,1054
+2020,Germany,1333
+2020,Greece,691
+2020,Hungary,92
+2020,Ireland,1017
+2020,Israel,1173
+2020,Italy,293
+2020,South Korea,22
+2020,Latvia,5
+2020,Lithuania,10
+2020,Netherlands,229
+2020,New Zealand,687
+2020,Norway,1114
+2020,Poland,390
+2020,Slovenia,69
+2020,Spain,4036
+2020,Sweden,789
+2020,Switzerland,1910
+2020,United Kingdom,9780
+2020,United States of America,7884
+2021,Australia,2450
+2021,Austria,207
+2021,Belgium,610
+2021,Canada,2807
+2021,Czechia,153
+2021,Denmark,283
+2021,Estonia,11
+2021,Finland,266
+2021,France,1251
+2021,Germany,1254
+2021,Greece,662
+2021,Hungary,113
+2021,Ireland,1707
+2021,Israel,1248
+2021,Italy,299
+2021,South Korea,29
+2021,Latvia,7
+2021,Lithuania,5
+2021,Netherlands,212
+2021,New Zealand,597
+2021,Norway,1083
+2021,Poland,887
+2021,Slovenia,68
+2021,Spain,4293
+2021,Sweden,NA
+2021,Switzerland,1810
+2021,United Kingdom,12609
+2021,United States of America,8028

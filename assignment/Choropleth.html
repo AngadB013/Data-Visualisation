@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choropleth Map with Slider and Zoom</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+    /* Map container */
+    .map-container {
+        margin-top: 80px;
+        border: 5px solid black;
+        padding: 20px;
+        width: 900px;
+        margin-left: 5px;
+        position: relative;
+        display: flex;
+    }
+
+    #map {
+        position: relative;
+        width: 940px;
+        margin-left: -20px;
+        height: 700px;
+    }
+
+    .content-main{
+        margin-top:95px;
+        text-align: center;
+        font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
+    }
+
+    .content-main p {
+        margin-bottom: -15px; 
+        font-weight: bold;
+    }
+
+    .red-cursive {
+        color: red; /* Setting text color to red */
+        font-style: italic; /* Applying italic font style */
+        font-family: cursive; /* Applying cursive font family */
+        font-size: 16px;
+    }
+
+    .legend {
+        position: absolute;
+        top: 703px;
+        left: 43%;
+        transform: translateX(-50%);
+        align-items: center;
+        display: flex;
+    }
+
+    .legend-item {
+        align-items: center;  
+    }
+
+    .legend-box {
+        width: 115px;
+        height: 20px;
+
+    }
+
+    .legend-text {
+        font-size: 12px;
+
+    }
+
+    .controls {
+        display: flex;
+        margin-bottom: 40px;
+        margin-left: 0px;
+    }
+
+    .tooltip {
+        position: absolute;
+        background-color: white;
+        border: 1px solid black;
+        padding: 10px;
+        pointer-events: none;
+    }
+
+    /* Add your CSS styling here */
+    .scatter-plot {
+        background-color: white;
+        border: 5px solid black;
+        margin: 10px;
+        padding: 10px;
+        width: 450px;
+        height: 300px;
+        display: inline-block;
+    }
+
+    .line-chart {
+        background-color: white;
+        border: 5px solid black;
+        margin: 10px;
+        padding: 10px;
+        width: 450px;
+        height: 300px;
+        display: inline-block;
+    }
+
+    .chart {
+        width: 600px;
+        height: 500px;
+    }
+
+    .axis-label {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .chart-title {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
+    /* Dropdown styling */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Arrow styling */
+    .arrow {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #333; /* Arrow color */
+        pointer-events: none;
+    }
+
+    /* Dropdown menu styling */
+    #heatmap-type {
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        border: 3px solid #333; 
+        border-radius: 5px;
+        background-color: #fff;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        outline: none;
+        transition: border-color 0.3s;
+        width: 200px; /* Increased width */
+        font-weight: bold;
+    }
+
+    #heatmap-type:hover {
+        border-color: #555;
+    }
+
+    #heatmap-type:focus {
+        border-color: #007bff;
+    }
+
+    /* Button styling */
+    .zoom-button, .reset-button {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .zoom-button:hover, .reset-button:hover {
+        background-color: #0056b3;
+    }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Migration</a>
+            <div class="nav-links">
+                <a href="Choropleth.html">Doctor Migration Heatmap</a>
+                <a href="tree.html">GDP</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="content-main">
+    <h1>Total Migration of Doctors Annually to OECD Countries</h1>
+        <p>Gain insights into the patterns, fluctuations, and implications of doctor migration, informing healthcare policies and 
+        workforce planning.</p>
+        <br>
+        <p class="red-cursive">Use the slider to navigate through years and uncover valuable trends.</p>
+        <br>
+        <p class="red-cursive">Hover on any country and check its trend through scatter plot and line charts</p>
+        <br>
+        <p class="red-cursive">Select from dropdown button for color blind or default view as per your needs</p>
+    </div>
+
+    <div class="map-container" style="display: flex;">
+        <div>
+            <div class="legend" id="color-legend"></div>
+            <div class="controls">
+                <input type="range" id="slider" min="2010" max="2021" value="2010" style="width:500px">
+                <label for="slider" style="font-size: 18px;font-family: arial, sans-serif;font-weight: bold;">Year: <span id="year">2010</span></label>
+            </div>
+            <div>
+                <!-- Dropdown with enhanced styling and arrow -->
+                <div class="dropdown">
+                    <select id="heatmap-type">
+                        <option value="original">Original View</option>
+                        <option value="color-blind">Color-blind View</option>
+                    </select>
+                    <div class="arrow"></div>
+                </div>
+
+                <!-- Zoom buttons -->
+                <div>
+                    <button class="zoom-button" id="zoom-in">Zoom In</button>
+                    <button class="zoom-button" id="zoom-out">Zoom Out</button>
+                    <button class="reset-button" id="reset-position">Reset Position</button>
+                </div>
+            </div>
+            <svg id="map" width="960" height="600"></svg>
+        </div>
+        <div id="line-chart-container"></div>
+    </div>
+
+    <footer>
+        <p>Created by Angad Singh Bajwa - (10316497) | Sridherr Ganesh - ()</p>
+        <p>Data Visualisation 2024</p>
+    </footer>
+
+    <script src="choropleth.js"></script>
+    
+</body>
+</html>
