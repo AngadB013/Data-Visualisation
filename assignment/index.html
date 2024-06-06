@@ -17,7 +17,7 @@
       background-image: url('background1.jpeg');
       background-size: cover;
       background-position: center;
-      height: 100vh;
+      height: 120vh;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,6 +29,7 @@
 
     /* Style for the main title text in the hero section */
     .hero-text {
+      font-family: "Ubuntu", sans-serif;
       font-size: 48px;
       font-weight: 700;
       color: #fff;
@@ -38,11 +39,22 @@
 
     /* Style for the subtitle text in the hero section */
     .hero-subtext {
+	    font-family: "Ubuntu", sans-serif;
       font-size: 24px;
       font-weight: 400;
       color: #fff;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
       margin-bottom: 40px; /* Add more space below the subtext */
+    }
+
+    /* Syle for the subtitles below the buttons*/
+    .hero-sub2text {
+      font-family: "Ubuntu", sans-serif;
+      font-size:20px;
+      color:#fff;
+      margin-top:80px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      font-weight:bold;
     }
 
     /* Style for the content sections */
@@ -149,7 +161,7 @@
       <a href="index.html" class="logo">Migration</a>
       <div class="nav-links">
         <a href="Choropleth.html">Doctor Migration Heatmap</a>
-        <a href="tree.html">GDP</a>
+        <a href="tree2.html">GDP</a>
       </div>
     </nav>
   </header>
@@ -160,8 +172,9 @@
     <div class="hero-subtext">Understanding the flow and economic impact of healthcare professionals worldwide</div>
     <div class="divbuttons">
       <button onclick="location.href='Choropleth.html'">Click Here to Check the Annual Flow of Doctors - Heat Map</button>
-      <button onclick="location.href='tree.html'">Click Here to Check the GDP of countries where doctors are flowing - Tree Map</button>
+      <button onclick="location.href='tree2.html'">Click Here to Check the GDP of countries where doctors are flowing - Tree Map</button>
     </div>
+    <div class="hero-sub2text">For more information Scroll Down ↓</div>
   </div>
 
   <!-- First content section with additional information and image -->
@@ -183,7 +196,7 @@
 
   <!-- Second content section with additional information and image -->
   <div class="content2">
-    <img class="leftside" src="visual_2.png" alt="Visual 2" onclick="location.href='tree.html'">
+    <img class="leftside" src="visual_2.png" alt="Visual 2" onclick="location.href='tree2.html'">
     <div class="content-text">
       <h2>Our GDP Visualisation</h2>
       <ul>
