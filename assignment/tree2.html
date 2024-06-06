@@ -1,267 +1,176 @@
-// Set up the width and height for the treemap
-const width = 850;
-const height = 550;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GDP Rate of Countries</title>
+  <!-- Included D3.js library -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <!-- Included Google Fonts for custom fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="navbar.css" />
+  <style>
 
-// Create a treemap layout with specified size and padding
-const treemap = d3.treemap().size([width, height]).paddingInner(1);
-
-// Select the chart container and append an SVG element for the treemap
-const svg = d3.select('#chart').append('svg').attr('width', width).attr('height', height);
-
-// Select the legend container and append an SVG element for the legend
-const legendSvg = d3.select('#legend').append('svg').attr('width', 200).attr('height', 600); // Adjust the width and height as needed
-
-// Initialize variables for nodes, color scale, and data
-let nodes;
-let colorScale;
-let data;
-
-// Load the CSV file containing GDP data
-d3.csv('gdp.csv').then((csvData) => {
-  data = csvData;
-  // Extract all GDP values from the data
-  const allGdpValues = data.map(d => +d['GDP per capita']);
-  const overallMinGDP = d3.min(allGdpValues); //Find the minimum GDP value
-  const overallMaxGDP = d3.max(allGdpValues); //Find the maximum GDP value
-
-  // Define custom thresholds for the legend based on the overall data
-  const thresholds = d3.range(overallMinGDP, overallMaxGDP, (overallMaxGDP - overallMinGDP) / 5);
-
-  // Create a threshold scale and reverse the color range
-  colorScale = d3.scaleThreshold()
-    .domain(thresholds)
-    .range(d3.schemeRdYlBu[6].reverse()); // Reverse the color scheme
-
-  // Initial render of the treemap for the year 2010
-  updateTreemap('2010'); // Initial render
-
-  // Get the slider and year label elements
-  const slider = document.getElementById('slider');
-  const yearLabel = document.getElementById('year-label');
-
-  // Added an event listener to the slider for input changes
-  slider.addEventListener('input', function () {
-    const year = this.value;      // Get the selected year from the slider
-    yearLabel.textContent = year;
-    updateTreemap(year);       // Update the treemap with the selected year
-  });
-
-  // Function to update the treemap based on the selected year
-  function updateTreemap(year) {
-    const newData = data.filter(d => d.Year == year);      // Filter data for the selected year
-    const root = d3.hierarchy({ children: newData }).sum(d => +d['GDP per capita']).sort((a, b) => b.value - a.value); // Create a hierarchy
-    treemap(root);
-
-    if (nodes) nodes.remove(); // Remove previous nodes
-
-    // Remove previous nodes and labels
-    svg.selectAll('.node').remove();
-    svg.selectAll('.country-label').remove();
-
-    // Create new nodes and labels
-    nodes = svg.selectAll('.node')
-      .data(root.descendants())
-      .enter()
-      .append('g')
-      .attr('class', 'node')
-      .attr('transform', d => `translate(${d.x0},${d.y0})`);
-
-    nodes
-      .append('rect')
-      .attr('width', d => d.x1 - d.x0)
-      .attr('height', d => d.y1 - d.y0)
-      .attr('fill', d => d.children ? 'none' : colorScale(d.data['GDP per capita']))
-      .attr('class', d => d.children ? null : 'node--leaf')
-      .on('mouseover', showTooltip)
-      .on('mousemove', moveTooltip)
-      .on('mouseleave', hideTooltip);
-
-    // Append text elements for country names
-    nodes.append('text')
-      .attr('x', 3)
-      .attr('y', 13)
-      .text(d => d.data.Entity ? d.data.Entity : '')
-      .attr('class', 'country-label')
-      .style('font-size', function(d) {
-        const width = d.x1 - d.x0;
-        const textLength = d.data.Entity ? d.data.Entity.length : 0;
-        return width / textLength < 8 ? '8px' : '10px'; // Adjust font size based on box width
-      });
-
-    updateLegend(overallMinGDP, overallMaxGDP); // Update legend with overall min and max GDP values
-  }
-
-  function updateLegend(minGDP, maxGDP) {
-    // Remove previous legend items
-    legendSvg.selectAll('*').remove();
-
-    // Define the legend
-    const legend = d3.legendColor()
-      .shapeWidth(50) // Set the shape width to fill the space
-      .shapeHeight(90) // Adjust shape height as needed
-      .shapePadding(0) // No padding between shapes
-      .labels(getLabels(thresholds, minGDP, maxGDP)) // Use custom labels
-      .scale(colorScale);
-
-    // Create a g element for the legend
-    const legendGroup = legendSvg.append('g')
-      .attr('class', 'legend')
-      .attr('transform', 'translate(20, 20)');
-
-    // Call the legend and render it
-    legendGroup.call(legend);
-  }
-
-  // Helper function to format GDP values for legend labels
-  function formatValue(value) {
-    return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
-  }
-
-  // Helper function to generate custom labels for the legend
-  function getLabels(thresholds, minGDP, maxGDP) {
-    const labels = [];
-    const thresholdValues = [...thresholds, maxGDP]; // Include the maximum value
-
-    for (let i = 0; i < thresholdValues.length; i++) {
-      const currentValue = thresholdValues[i];
-      const nextValue = thresholdValues[i + 1];
-
-      if (i === 0) {
-        labels.push(`≥ $${formatValue(currentValue)}`);
-      } else if (i === thresholdValues.length - 1) {
-        labels.push(`< $${formatValue(currentValue)}`);
-      } else {
-        labels.push(`$${formatValue(currentValue)} - $${formatValue(nextValue - 1)}`);
-      }
+    /*Content Section*/
+    .content-main{
+        margin-top:95px;
+        text-align: center;
+        font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
     }
 
-    return labels;
-  }
+    .content-main p {
+        margin-bottom: -15px; 
+        font-weight: bold;
+	    font-size: 18px;
+	    font-family: 'Nunito', sans-serif; /* Applying Nunito font family */
+    }
 
-// Function to show tooltip and highlight the hovered node
-function showTooltip(event, d) {
-  const tooltip = d3.select('.legend-tooltip');
-  const gdpPerCapita = d.data['GDP per capita'];
-  const countryName = d.data.Entity;
-  const year = d.data.Year;
-  const tooltipContent = `
-    <div>Country: ${countryName}</div>
-    <div>Year: ${year}</div>
-    <div>GDP Per Capita: $${gdpPerCapita}</div>
-    <div>(International Rate)</div>
-    <div id="line-chart"></div>
-  `;
+    .red-cursive {
+        color: red; /* Setting text color to red */
+        font-size: 18px;
+    }
 
-  tooltip.html(tooltipContent)
-    .style('display', 'block')
-    .style('left', (event.pageX + 10) + 'px')
-    .style('top', (event.pageY - 10) + 'px')
-    .style('font-family', 'Arial, sans-serif')
-    .style('font-weight', 'bold')
-    .style('font-size', '14px')
-    .style('color', '#333')
-    .style('background-color', '#fff')
-    .style('border', '1px solid #ccc')
-    .style('border-radius', '5px')
-    .style('padding', '10px')
-    .style('box-shadow', '0 2px 4px rgba(0, 0, 0, 0.1)');
+    /* CSS styles to ensure text labels have a higher z-index */
+    .node text {
+      pointer-events: none;
+      z-index: 1; /* Ensure text labels are above tooltip */
+    }
 
-  // Create a small line chart for the GDP per capita
-  const gdpData = data.filter(d => d.Entity === countryName);
-  const margin = { top: 10, right: 10, bottom: 30, left: 50 }; // Adjusted margins
-  const chartWidth = 200 - margin.left - margin.right;
-  const chartHeight = 150 - margin.top - margin.bottom; // Increased height for Y-axis
+    .node:hover text {
+      pointer-events: auto;
+    }
 
-  const xScale = d3.scaleTime()
-    .domain(d3.extent(gdpData, d => new Date(d.Year)))
-    .range([0, chartWidth]);
+    text {
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+    }
 
-  const yScale = d3.scaleLinear()
-    .domain([0, d3.max(gdpData, d => +d['GDP per capita'])])
-    .range([chartHeight, 0]);
+    #slider-container {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top:75px;
+    }
 
-  const line = d3.line()
-    .x(d => xScale(new Date(d.Year)))
-    .y(d => yScale(+d['GDP per capita']));
+    #slider {
+      width: 500px;
+      height: 20px;
+      background-color: #ddd;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: 0.2s;
+      transition: opacity 0.2s;
+    }
 
-  // Append SVG element to the line chart div
-  const migrationSvg = d3.select('#line-chart').append('svg')
-    .attr('width', chartWidth + margin.left + margin.right)
-    .attr('height', chartHeight + margin.top + margin.bottom)
-    .attr('class', 'migration-chart');
+    #slider:hover {
+      opacity: 1;
+    }
 
-  const g = migrationSvg.append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`);
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
 
-  g.append('path')
-    .datum(gdpData)
-    .attr('class', 'line')
-    .attr('d', line)
-    .attr('stroke', 'blue')
-    .attr('stroke-width', 2)
-    .attr('fill', 'none');
+    #slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
 
-g.append('g')
-  .attr('class', 'x-axis')
-  .attr('transform', `translate(0,${chartHeight})`)
-  .call(d3.axisBottom(xScale).ticks(7).tickFormat(d3.timeFormat('%Y')))
-  .selectAll('text')
-  .style('font-size', '10px') 
-  .attr('transform', 'rotate(-40)') 
-  .style('text-anchor', 'end') 
-  .attr('dx', '-0.5em') 
-  .attr('dy', '0.5em') 
-  .attr('y', -5) 
-  .attr('x', -5)
-  .style('text-anchor', 'end'); // Set text anchor to end for proper alignment
+    #chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
 
+    #chart {
+      border: 2px solid black; 
+      margin-right: 22px;
+    }
 
-  // Append y-axis with rotated labels
-  g.append('g')
-    .attr('class', 'y-axis')
-    .call(d3.axisLeft(yScale).ticks(6))
-    .selectAll('text')
-    .style('font-size', '10px') 
-    .attr('transform', 'rotate(-45)') // Rotate the y-axis labels
-    .style('text-anchor', 'end') // Adjust text alignment after rotation
-    .attr('dx', '-0.5em') // Adjust horizontal positioning after rotation
-    .attr('dy', '0.5em') // Adjust vertical positioning after rotation
-    .attr('y', -5) // Adjust vertical positioning after rotation
-    .attr('x', -5); 
+    #legend-container {
+      width: 200px;
+      
+    }
+    
+    .legend-item:hover {
+      cursor: pointer;
+      fill-opacity: 0.8; /* Adjust opacity on hover */
+    }
 
-  // Append axis labels
-  g.append('text')
-    .attr('transform', 'rotate(-90)')
-    .attr('y', 0 - margin.left - 2)
-    .attr('x', 0 - (chartHeight / 2))
-    .attr('dy', '1em')
-    .style('text-anchor', 'middle')
-    .style('font-size', '10px') // Adjust font size
-    .text('GDP Per Capita');
+    .legend-tooltip {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      pointer-events: none; /* Ensure tooltips don't interfere with hover events */
+      display: none; /* Initially hide tooltip */
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
+      width:200px;
+    }
 
-  g.append('text')
-    .attr('transform', `translate(${chartWidth / 2},${chartHeight + margin.top + 20})`) // Adjusted position for the x-axis label
-    .style('text-anchor', 'middle')
-    .style('font-size', '10px') // Adjust font size
-    .text('Year');
-}
+  </style>
+</head>
+<body>
+  <!-- Header with navigation bar -->
+  <header>
+    <nav>
+        <a href="index.html" class="logo">Migration</a>
+        <div class="nav-links">
+            <a href="Choropleth.html">Doctor Migration Heatmap</a>
+            <a href="tree2.html">GDP</a>
+        </div>
+    </nav>
+</header>
 
-  // Function to move tooltip
-  function moveTooltip(event) {
-    const tooltip = d3.select('.legend-tooltip');
-    tooltip.style('left', (event.pageX + 10) + 'px')
-      .style('top', (event.pageY - 10) + 'px');
-  }
+  <!-- Main content area with instructions and descriptions -->
+  <div class="content-main">
+    <h1>Understanding Global Economic Trends: GDP Rates of Countries with Treemap Chart</h1>
+    <p>Explore the economic landscapes of nations across the globe through our interactive treemap visualisation of Gross Domestic Product (GDP) rates.</p>
+    <br>
+    <p>As a complement to our primary visualisation on doctor migration patterns, this treemap offers invaluable insights into how economic conditions influence the movement of healthcare professionals across borders 
+      and it uses the same color scale as used in the heatmap for better comparison.</p>
+    <br>
+    <p class="red-cursive">How to Use</p>
+    <br>
+    <p class="red-cursive">Year Navigation: Utilise the slider to seamlessly navigate through different years and observe the evolving GDP rates of countries. The bigger the box the higher the GDP.</p>
+    <br>
+    <p class="red-cursive">Hover Interactivity: Hover over any country to reveal detailed information about its GDP per capita, providing valuable insights into its economic status and growth trajectory.</p>
+  </div>
 
-  // Function to hide tooltip and remove highlight from the node
-  function hideTooltip() {
-    const tooltip = d3.select('.legend-tooltip');
-    tooltip.style('display', 'none');
-    tooltip.select('.migration-chart').remove(); // Remove the chart when hiding the tooltip
+  <!-- Slider container for year selection -->
+  <div id="slider-container">
+    <input type="range" id="slider" min="2010" max="2022" step="1" value="2010" />
+    <span style="font-size: 18px; font-family: arial, sans-serif; font-weight: bold;">Year: <span id="year-label">2010</span></span>
+  </div>
+  <!-- Container for the chart and legend -->
+  <div id="chart-container">
+    <div id="chart"></div>
+    <div id="legend-container">
+      <div id="legend"></div>
+    </div>
+  </div>
+   <!-- Tooltip for legend interaction -->
+  <div class="legend-tooltip"></div>
 
-    // Remove highlight from the node
-    d3.select(this)
-      .attr('stroke', 'none');
-  }
+  <!-- Footer with author information -->
+  <footer>
+    <p>Created by Angad Singh Bajwa - (103166497) | Sridherr Ganesh - (104203751)</p>
+    <p>Data Visualisation 2024</p>
+  </footer>
 
-});
+  <script src="tree2.js"></script>
+
+</body>
+</html>
