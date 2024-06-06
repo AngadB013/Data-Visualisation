@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GDP Rate of Countries</title>
+  <!-- Included D3.js library -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <!-- Included Google Fonts for custom fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="navbar.css" />
+  <style>
+
+    h2 {
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Style for the content sections */
+    .content-main{
+      margin-top:87px;
+      text-align: center;
+      font-family: "Ubuntu", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .content-main p {
+      margin-bottom: -25px; 
+    }
+
+    .red-cursive {
+      color: red; /* Setting text color to red */
+      font-style: italic; /* Applying italic font style */
+      font-family: cursive; /* Applying cursive font family */
+      font-size: 18px;
+    }
+
+    /* CSS styles to ensure text labels have a higher z-index */
+    .node text {
+      pointer-events: none;
+      z-index: 1; /* Ensure text labels are above tooltip */
+    }
+
+    .node:hover text {
+      pointer-events: auto;
+    }
+
+    text {
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+    }
+
+    #slider-container {
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top:75px;
+    }
+
+    #slider {
+      width: 500px;
+      height: 20px;
+      background-color: #ddd;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: 0.2s;
+      transition: opacity 0.2s;
+    }
+
+    #slider:hover {
+      opacity: 1;
+    }
+
+    #slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
+
+    #slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      cursor: pointer;
+    }
+
+    #chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+
+    #chart {
+      border: 2px solid black; 
+      margin-right: 22px;
+    }
+
+    #legend-container {
+      width: 200px;
+      
+    }
+    
+    .legend-item:hover {
+      cursor: pointer;
+      fill-opacity: 0.8; /* Adjust opacity on hover */
+    }
+
+    .legend-tooltip {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      pointer-events: none; /* Ensure tooltips don't interfere with hover events */
+      display: none; /* Initially hide tooltip */
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
+      width:200px;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Header with navigation bar -->
+  <header>
+    <nav>
+        <a href="index.html" class="logo">Migration</a>
+        <div class="nav-links">
+            <a href="Choropleth.html">Doctor Migration Heatmap</a>
+            <a href="tree2.html">GDP</a>
+        </div>
+    </nav>
+</header>
+
+  <!-- Main content area with instructions and descriptions -->
+  <div class="content-main">
+    <h2>Understanding Global Economic Trends: GDP Rates of Countries with Treemap Chart</h2>
+    <p><b>Explore the economic landscapes of nations across the globe through our interactive treemap visualisation of Gross Domestic Product (GDP) rates.</b></p>
+    <br>
+    <p><b>As a complement to our primary visualisation on doctor migration patterns, this treemap offers invaluable insights into how economic conditions influence the movement of healthcare professionals across borders 
+      and it uses the same color scale as used in the heatmap for better comparison</b></p>
+    <br>
+    <p class="red-cursive"><b>How to Use</b></p>
+    <br>
+    <p class="red-cursive"><b>Year Navigation:</b> Utilise the slider to seamlessly navigate through different years and observe the evolving GDP rates of countries. The bigger the box the higher the GDP.</p>
+    <br>
+    <p class="red-cursive"><b>Hover Interactivity:</b> Hover over any country to reveal detailed information about its GDP per capita, providing valuable insights into its economic status and growth trajectory.</p>
+  </div>
+
+  <!-- Slider container for year selection -->
+  <div id="slider-container">
+    <input type="range" id="slider" min="2010" max="2022" step="1" value="2010" />
+    <span style="font-size: 18px; font-family: arial, sans-serif; font-weight: bold;">Year: <span id="year-label">2010</span></span>
+  </div>
+  <!-- Container for the chart and legend -->
+  <div id="chart-container">
+    <div id="chart"></div>
+    <div id="legend-container">
+      <div id="legend"></div>
+    </div>
+  </div>
+   <!-- Tooltip for legend interaction -->
+  <div class="legend-tooltip"></div>
+
+  <!-- Footer with author information -->
+  <footer>
+    <p>Created by Angad Singh Bajwa - (10316497) | Sridherr Ganesh - (104203751)</p>
+    <p>Data Visualisation 2024</p>
+  </footer>
+
+  <script src="tree2.js"></script>
+
+</body>
+</html>
